@@ -10,14 +10,20 @@ export default function Home() {
   // Reveal on scroll (IntersectionObserver)
   const observeRef = useRef<IntersectionObserver | null>(null);
   useEffect(() => {
+    // marca <html> como JS-enabled (opcional pra CSS refinado)
     document.documentElement.classList.add("js");
-    const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+
+    const els = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-reveal]")
+    );
 
     if (!("IntersectionObserver" in window)) {
+      // sem IO: mostra tudo
       els.forEach((el) => el.classList.add("in"));
       return;
     }
 
+    // aplica a classe do CSS module só via JS (evita sumir sem JS)
     els.forEach((el) => el.classList.add(s.reveal));
 
     observeRef.current = new IntersectionObserver(
@@ -37,7 +43,13 @@ export default function Home() {
       {/* HEADER com logo centralizada */}
       <div className={`${s.header} container`}>
         <div className={`${s.logo} ${s.logoIn}`}>
-          <Image src="/blindagem.png" alt="Blindagem Elite" width={178} height={178} priority />
+          <Image
+            src="/blindagem.png"
+            alt="Blindagem Elite"
+            width={178}
+            height={178}
+            priority
+          />
           <span></span>
         </div>
       </div>
@@ -48,26 +60,31 @@ export default function Home() {
         <div className={s.light} />
         <div className={s.light2} />
 
-        <header className={`${s.heroHead}`} data-reveal>
+        <header className={`${s.heroHead} ${s.uLightBlue}`} data-reveal>
           <span className={s.kicker}>Nanotecnologia de Titânio</span>
           <h1 className={s.titleXL}>
             Blindagem <span>Elite</span>
           </h1>
           <p className={s.lead}>
-            Uma <strong>nanocamada invisível de titânio</strong> projetada para absorver e dispersar
-            energia de <strong>impactos fortes</strong> e <strong>pontas agudas</strong>, mantendo a
-            transparência e o toque original. Tecnologia inspirada em ligas usadas na{" "}
-            <em>aeronáutica</em> — leve, extremamente resistente e estável.
+            Uma <strong>nanocamada invisível de titânio</strong> que protege seus
+            dispositivos sem alterar a estética: resistência a micro-riscos,
+            durabilidade extrema e filtragem de ruídos eletromagnéticos — com
+            transparência total.
           </p>
         </header>
 
         <div className={s.ctaRow} data-reveal>
-          <button className={s.btnPrimary} onClick={() => window.open(whatsapp, "_blank")}>
+          <button
+            className={s.btnPrimary}
+            onClick={() => window.open(whatsapp, "_blank")}
+          >
             Quero Blindagem Elite
           </button>
           <button
             className={s.btnGhost}
-            onClick={() => document.getElementById("tech")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() =>
+              document.getElementById("tech")?.scrollIntoView({ behavior: "smooth" })
+            }
           >
             Ver tecnologia
           </button>
@@ -75,11 +92,16 @@ export default function Home() {
 
         <div className={s.badges} data-reveal>
           <span className={s.badge}>
-            <i className={s.dot} /> Resiste a impactos fortes
+            <i className={s.dot} /> Ultra-transparente
+          </span>
+          <span className={s.badge}>
+            <i className={s.dot} /> Resistência a micro-riscos
+          </span>
+          <span className={s.badge}>
+            <i className={s.dot} /> Filtragem EMI parcial
           </span>
         </div>
-
-        {/* Vídeo opcional (desktop). Remova se não usar. */}
+     {/* Vídeo opcional (desktop). Remova se não usar. */}
         <div className="hidden-mobile" aria-hidden>
           <video autoPlay muted loop playsInline preload="metadata">
             <source src="/hero.mp4" type="video/mp4" />
@@ -106,7 +128,7 @@ export default function Home() {
               <span className={s.kicker}>O Desafio Invisível</span>
             </div>
             <h2 className={s.titleLG} data-reveal>
-              Quedas, pancadas e pontas metálicas existem — e destroem telas.
+              Quedas, pancadas e pontas metálicas existem e destroem telas.
             </h2>
             <p className={s.muted} data-reveal>
               No uso real, o dispositivo sofre desde micro-riscos até <strong>impactos concentrados</strong>
@@ -346,7 +368,7 @@ export default function Home() {
             <details>
               <summary><strong>Suporta quedas?</strong></summary>
               <p className={s.muted} style={{ marginTop: 8 }}>
-                Projetada para auxiliar em <strong>quedas e batidas fortes</strong> — reduzindo iniciação de trincas e
+                Projetada para auxiliar em <strong>quedas e batidas fortes</strong> reduzindo iniciação de trincas e
                 danos por foco de impacto. Quedas extremas podem exceder qualquer sistema de proteção, mas nossos
                 testes práticos demonstram performance superior.
               </p>
