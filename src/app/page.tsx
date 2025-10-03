@@ -65,11 +65,11 @@ export default function Home() {
           <h1 className={s.titleXL}>
             Blindagem <span>Elite</span>
           </h1>
-          <p className={s.lead}>
-            Uma <strong>nanocamada invisível de titânio</strong> que protege seus
-            dispositivos sem alterar a estética: resistência a micro-riscos,
-            durabilidade extrema e filtragem de ruídos eletromagnéticos — com
-            transparência total.
+            <p className={s.lead}>
+            Uma <strong>nanocamada invisível de titânio</strong> projetada para absorver e dispersar
+            energia de <strong>impactos fortes</strong> e <strong>pontas agudas</strong>, mantendo a
+            transparência e o toque original. Tecnologia inspirada em ligas usadas na{" "}
+            <em>aeronáutica</em> — leve, extremamente resistente e estável.
           </p>
         </header>
 
