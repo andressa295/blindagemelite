@@ -95,9 +95,6 @@ export default function Home() {
             <i className={s.dot} /> Ultra-transparente
           </span>
           <span className={s.badge}>
-            <i className={s.dot} /> Resistência a micro-riscos
-          </span>
-          <span className={s.badge}>
             <i className={s.dot} /> Filtragem EMI parcial
           </span>
         </div>
