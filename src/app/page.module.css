@@ -1,0 +1,321 @@
+.page { overflow-x: hidden; background: var(--c-bg); }
+
+/* ---------- HERO ---------- */
+.hero {
+  position: relative;
+  padding: 88px 0 64px;
+  text-align: center;
+  overflow: hidden;
+}
+.heroHead {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 px;
+  position: relative;
+  z-index: 2; /* conteúdo acima das luzes e do vídeo */
+}
+.kicker {
+  color: var(--c-blue);
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+.titleXL {
+  font-size: clamp(34px, 9vw, 72px);
+  font-weight: 700;
+  line-height: 1.03;
+  text-transform: uppercase;
+  margin: 8px 0 10px;
+}
+.glow {
+  text-shadow: 0 0 10px rgba(29,143,255,.65), 0 0 20px rgba(255,36,63,.45);
+}
+.lead {
+  color: var(--c-muted);
+  font-size: clamp(15px, 2.4vw, 18px);
+  margin: 8px auto 0;
+  max-width: 760px;
+}
+
+/* Luzes discretas — sempre ATRÁS do conteúdo */
+.light, .light2 {
+  position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen;
+  opacity:.18; z-index: 0;
+}
+.light  { background: radial-gradient(600px 260px at 50% -10%, rgba(29,143,255,.7), transparent 60%); }
+.light2 { background: radial-gradient(600px 260px at 50% 110%, rgba(255,36,63,.6), transparent 60%); }
+
+/* Vídeo de fundo do hero (atrás) */
+.heroVideo {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: .18; filter: blur(1px) contrast(118%);
+  z-index: 0; pointer-events: none;
+}
+
+.ctaRow {
+  position: relative; z-index: 2;
+  margin-top: 16px;
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+}
+.btnPrimary {
+  background: var(--c-blue);
+  border: 1px solid #0a4c8a;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: var(--r-md);
+  font-weight: 800;
+  letter-spacing: .3px;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: transform .18s ease, background .18s ease;
+}
+.btnPrimary:hover { background: var(--c-blue-2); transform: translateY(-2px); }
+.btnGhost {
+  background: transparent;
+  color: #eaeaea;
+  border: 1px solid var(--c-line);
+  padding: 12px 16px;
+  border-radius: var(--r-md);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Badges */
+.badges {
+  position: relative; z-index: 2;
+  margin-top: 12px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+}
+.badge {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size: 12px; color:#d8d8d8;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #1c1c1c;
+}
+.dot {
+  width:7px; height:7px; border-radius:50%;
+  background: var(--c-blue); box-shadow: 0 0 8px var(--c-blue);
+  display:inline-block;
+}
+
+/* ---------- SEÇÕES ---------- */
+.section { padding: 56px 0; }
+.gridTwo {
+  display:grid; gap:16px; align-items:center;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 880px) { .gridTwo { grid-template-columns: 1.05fr .95fr; } }
+.gridThree {
+  display:grid; gap:12px; grid-template-columns: 1fr; margin-top: 16px;
+}
+@media (min-width: 880px) { .gridThree { grid-template-columns: repeat(3,1fr); } }
+
+.titleLG {
+  font-size: clamp(22px, 4.2vw, 36px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 6px 0 10px;
+}
+.muted { color: var(--c-muted); }
+
+.figure {
+  position:relative; aspect-ratio: 16/10;
+  border-radius: 14px; overflow:hidden;
+  border:1px solid var(--c-line);
+  background: rgba(255,255,255,.02);
+}
+.figure::after {
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background: linear-gradient(110deg, rgba(255,255,255,.06), transparent 45%);
+}
+
+/* Cards */
+.card {
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--c-line);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+/* Lista com “risco” colorido sob o título do item */
+.list { display:grid; gap:12px; margin-top: 14px; }
+.list li { display:flex; gap:10px; align-items:flex-start; }
+.icon { width:9px; height:9px; border-radius:50%; background: var(--c-blue); margin-top: 7px; box-shadow: 0 0 8px var(--c-blue); }
+
+.itemTitle {
+  display:inline-block; font-weight: 700; color: #fff; position: relative; padding-bottom: 6px;
+}
+.itemTitle.red::after,
+.itemTitle.blue::after {
+  content:""; position:absolute; left:0; right:0; bottom:0; height:2px; border-radius:2px;
+}
+.itemTitle.red::after  { background: var(--c-red);  box-shadow: 0 0 12px rgba(255,36,63,.45); }
+.itemTitle.blue::after { background: var(--c-blue); box-shadow: 0 0 12px rgba(29,143,255,.45); }
+
+/* Versões suaves (sutileza extra nos itens) */
+.itemTitle.soft.red::after  { background: rgba(255,36,63,.7);  box-shadow: 0 0 8px rgba(255,36,63,.35); }
+.itemTitle.soft.blue::after { background: rgba(29,143,255,.75); box-shadow: 0 0 8px rgba(29,143,255,.35); }
+
+/* “Risco” sob subtítulos de bloco (central e sutil) */
+.underRed, .underBlue {
+  position: relative;
+  padding-bottom: 4px;      /* encosta bem no texto */
+}
+.underRed::after, .underBlue::after {
+  content:""; 
+  position:absolute; 
+  left:50%; 
+  transform:translateX(-50%);
+  bottom:0;                 /* gruda na fonte */
+  width: 120px;             /* pode reduzir pra ficar mais elegante */
+  height: 2px;
+  border-radius:2px;
+  filter: none;             /* sem blur que separa */
+}
+
+/* Glow colado no risco */
+.underRed::after {
+  background: rgb(0, 0, 0);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 0, 0, 0.6);
+}
+.underBlue::after {
+  background: rgba(29,143,255,1);
+  box-shadow: 0 0 6px rgba(29,143,255,.9), 0 0 12px rgba(29,143,255,.6);
+}
+
+/* Vídeo / mídia */
+.video { aspect-ratio: 16/9; }
+.video video { width:100%; height:100%; object-fit:cover; display:block; }
+
+/* CTA final / disclaimer */
+.center { text-align:center; }
+.disclaimer { display:block; color:#9a9a9a; margin-top: 12px; font-size: 12px; }
+
+/* Rodapé */
+.footer {
+  padding: 36px 0; border-top: 1px solid var(--c-line);
+  text-align: center; color:#9c9c9c; font-size: 14px;
+}
+
+/* ===== HEADER com LOGO central (efeito de entrada) ===== */
+.header {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px 0 10px;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--c-line);
+}
+.logo {
+  display: inline-flex; align-items: center; gap: 10px;
+  text-transform: uppercase; font-weight: 800; letter-spacing: .6px;
+}
+.logo img { filter: drop-shadow(0 0 8px rgba(63, 63, 63, 0.55)); }
+.logoIn { animation: logoIn .65s ease forwards; opacity: 0; transform: translateY(-6px) scale(.96); }
+@keyframes logoIn { to { opacity: 1; transform: translateY(0) scale(1); } }
+
+/* ===== SCROLL REVEAL — SEM FLICKER ===== */
+/* Visível por padrão */
+.reveal {
+  opacity: 1;
+  transform: none;
+  transition: opacity .6s ease, transform .6s ease;
+  will-change: opacity, transform;
+}
+
+/* Só fica “pré-oculto” se tiver data-pre (controlado via JS) */
+.reveal[data-pre="true"] {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+/* Quando entrar na viewport */
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* ===== Focus visível ===== */
+.btnPrimary:focus-visible, .btnGhost:focus-visible {
+  outline: 2px solid var(--c-blue);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(29,143,255,.25);
+}
+
+/* ===== FAQ Section ===== */
+.faq {
+  padding: 56px 0;
+}
+
+.faq h2 {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.faqGrid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 880px) {
+  .faqGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Card de FAQ */
+.faqCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--c-line);
+  border-radius: 14px;
+  padding: 18px 20px;
+  transition: border 0.3s ease, background 0.3s ease;
+}
+.faqCard:hover {
+  border-color: var(--c-blue);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Detalhes / Pergunta */
+.faqCard details {
+  cursor: pointer;
+}
+.faqCard summary {
+  font-weight: 700;
+  color: #fff;
+  list-style: none;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  padding-right: 24px;
+}
+.faqCard summary::-webkit-details-marker {
+  display: none;
+}
+.faqCard summary::after {
+  content: "➕";
+  position: absolute;
+  right: 0;
+  font-size: 14px;
+  color: var(--c-blue);
+  transition: transform 0.25s ease;
+}
+.faqCard[open] summary::after {
+  content: "➖";
+  transform: rotate(180deg);
+}
+
+/* Resposta */
+.faqCard p {
+  color: var(--c-muted);
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Utils para compor com CSS Modules */
+.red {}
+.blue {}
+.soft {}
