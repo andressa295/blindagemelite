@@ -69,7 +69,7 @@ export default function Home() {
             Uma <strong>nanocamada invisível de titânio</strong> projetada para absorver e dispersar
             energia de <strong>impactos fortes</strong> e <strong>pontas agudas</strong>, mantendo a
             transparência e o toque original. Tecnologia inspirada em ligas usadas na{" "}
-            <em>aeronáutica</em> — leve, extremamente resistente e estável.
+            <em>aeronáutica</em> leve, extremamente resistente e estável.
           </p>
         </header>
 
@@ -304,7 +304,7 @@ export default function Home() {
       {/* FAQ */}
       <section className={`${s.section} container`} id="faq">
         <div data-reveal>
-          <span className={s.kicker}>Pack — Dúvidas Frequentes</span>
+          <span className={s.kicker}>Dúvidas Frequentes</span>
         </div>
         <h2 className={s.titleLG} data-reveal>Perguntas que sempre nos fazem</h2>
 
