@@ -1,9 +1,10 @@
 "use client";
+import Image from "next/image";
 
 type Props = {
   whatsappUrl: string;
   onScrollToOque?: () => void;
-  childrenEffect?: React.ReactNode; // opcional: VantaBackground dentro do bloco
+  childrenEffect?: React.ReactNode;
 };
 
 export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Props) {
@@ -11,46 +12,45 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
 
   return (
     <section className="container heroSplit" id="topo">
-      {/* efeito opcional (Vanta) – renderiza atrás do conteúdo */}
       {childrenEffect}
 
       <div className="heroSplit__left">
         <div className="titleWrap" data-reveal>
-          <div className="metalStripe" aria-hidden />
-          <h1 className="h1">Elite Blindagem: o futuro da proteção já chegou</h1>
+          <h1 className="h1">elite blindagem — o futuro da proteção já chegou</h1>
         </div>
 
-        <p className="eyebrow" data-reveal>Proteção invisível · Resistência incomparável</p>
+        <p className="eyebrow" data-reveal>proteção invisível · resistência incomparável</p>
 
         <p className="lead" data-reveal>
-          A elite blindagem traz ao brasil uma tecnologia de nanoproteção com titânio que cria
+          a elite blindagem traz ao brasil uma tecnologia de nanoproteção com titânio que cria
           uma camada invisível e ultra-resistente, mantendo o aparelho com aparência de novo por muito mais tempo.
         </p>
 
         <p className="subLead" data-reveal>
-          <strong>É ciência aplicada à proteção do seu celular.</strong>
+          não é película. não é capinha. <strong>é ciência aplicada à proteção do seu celular.</strong>
         </p>
 
         <div className="ctaRow left" data-reveal>
-          <button className="btnPrimary" onClick={openWhats}>Agendar pelo whatsapp</button>
-          <button
-            className="btnGhost"
-            onClick={onScrollToOque}
-          >
-            O que é a blindagem?
-          </button>
+          <button className="btnPrimary" onClick={openWhats}>agendar pelo whatsapp</button>
+          <button className="btnGhost" onClick={onScrollToOque}>o que é a blindagem?</button>
         </div>
       </div>
 
       <div className="heroSplit__right" data-reveal>
         <div className="heroFrame">
           <div className="heroFrame__glass">
-            
-            <img src="/elite.jpg" alt="dispositivo protegido" />
+            {/* Use fill + sizes pro LCP otimizado */}
+            <Image
+              src="/mockups/problema.jpg"
+              alt="dispositivo protegido"
+              fill
+              sizes="(max-width: 900px) 100vw, 50vw"
+              priority
+            />
           </div>
           <div className="heroFrame__badge">
-            <img src="/blindagem.png" alt="" width={22} height={22} />
-            <span>Nanoproteção com titânio</span>
+            <Image src="/blindagem.png" alt="" width={22} height={22} />
+            <span>nanoproteção com titânio</span>
           </div>
         </div>
       </div>

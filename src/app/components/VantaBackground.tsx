@@ -2,12 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import NET from "vanta/dist/vanta.net.min";
+import NET, { VantaEffect } from "vanta/dist/vanta.net.min";
 
-// Evita colisão com HTMLAttributes.color (string)
+// Evita colisão com HTMLAttributes.color
 type VantaProps = Omit<React.HTMLAttributes<HTMLDivElement>, "color"> & {
-  bgColor?: number;     // ex: 0xf5f7fa
-  lineColor?: number;   // ex: 0x0e1116
+  bgColor?: number;
+  lineColor?: number;
 };
 
 export default function VantaBackground({
@@ -17,7 +17,7 @@ export default function VantaBackground({
   ...rest
 }: VantaProps) {
   const elRef = useRef<HTMLDivElement>(null);
-  const effectRef = useRef<any>(null);
+  const effectRef = useRef<VantaEffect | null>(null);
 
   useEffect(() => {
     if (!effectRef.current && elRef.current) {
@@ -31,7 +31,10 @@ export default function VantaBackground({
         spacing: 14.0,
       });
     }
-    return () => effectRef.current?.destroy?.();
+    return () => {
+      effectRef.current?.destroy?.();
+      effectRef.current = null;
+    };
   }, [bgColor, lineColor]);
 
   return <div ref={elRef} className={className ?? "vantaBlock"} {...rest} />;

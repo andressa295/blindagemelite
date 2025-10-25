@@ -457,3 +457,79 @@ a:hover { text-decoration: underline; }
     margin-top: 14px;
   }
 }
+
+/* ===== Bloco “Por que escolher” — vidro fosco iluminado ===== */
+.chooseWrap {
+  position: relative;
+  padding: 18px 0 20px;
+}
+
+.chooseTitle {
+  text-align: center;
+  margin-bottom: 14px;
+  color: #0d1116;
+}
+
+.chooseGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 700px) {
+  .chooseGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+}
+
+.chooseCard {
+  position: relative;
+  border-radius: 18px;
+  padding: 16px 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.chooseCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.09);
+}
+
+.chooseIcon {
+  font-size: 22px;
+  color: #3d4b63;
+  margin-bottom: 8px;
+}
+
+.chooseText {
+  color: #20242a;
+  font-size: 14.6px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.chooseNote {
+  text-align: center;
+  font-size: 12.5px;
+  color: #6f7883;
+  margin-top: 14px;
+}
+
+/* versão mobile-first: 2 colunas */
+@media (max-width: 480px) {
+  .chooseGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .chooseText {
+    font-size: 13.3px;
+  }
+  .chooseIcon {
+    font-size: 20px;
+  }
+}
