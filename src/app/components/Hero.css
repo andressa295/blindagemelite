@@ -1,0 +1,121 @@
+:root{
+  --hero-bg: #0f1114;
+  --text: #e9edf2;
+  --text-muted: #a9b1bb;
+  --primary: #37c16b;
+  --border: rgba(255,255,255,.10);
+  --fxOpacity: 0.08; /* levemente mais visível pra “aparecer” */
+}
+
+/* ===== Hero ===== */
+.hero{
+  position: relative;
+  isolation: isolate;
+  background: var(--hero-bg);
+  color: var(--text);
+  overflow: clip;
+  padding: clamp(44px, 6.5vw, 80px) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+/* EFEITO ÚNICO (bolhas + riscos finos, movimento lento) */
+.fxSoft{
+  position: absolute;
+  inset: -8%;
+  z-index: 0;                /* efeito acima do fundo */
+  pointer-events: none;
+  background:
+    radial-gradient(280px 280px at 18% 22%, rgba(255,255,255,.12), transparent 60%),
+    radial-gradient(360px 360px at 82% 72%, rgba(255,255,255,.10), transparent 65%),
+    repeating-linear-gradient(
+      115deg,
+      rgba(255,255,255, calc(var(--fxOpacity) * 0.9)) 0px,
+      rgba(255,255,255, calc(var(--fxOpacity) * 0.9)) 1px,
+      transparent 1px,
+      transparent 28px
+    );
+  opacity: var(--fxOpacity);
+  animation: fxDrift 26s linear infinite;
+  will-change: background-position, transform;
+  transform: translateZ(0);
+}
+@keyframes fxDrift{
+  0%{   background-position: 0 0, 0 0, 0 0;   transform: translate3d(0,0,0); }
+  50%{  background-position: 20px 16px, -16px -20px, 14px -10px; transform: translate3d(0,-1.2%,0); }
+  100%{ background-position: 0 0, 0 0, 0 0;   transform: translate3d(0,0,0); }
+}
+@media (prefers-reduced-motion: reduce){
+  .fxSoft{ animation: none; }
+}
+
+/* ===== Layout (imagem primeiro no mobile) ===== */
+.wrap{
+  position: relative;
+  z-index: 1;                /* conteúdo acima do efeito */
+  width: min(1200px, 92%);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "media"
+    "copy";
+  gap: clamp(18px, 4vw, 36px);
+  align-items: center;
+}
+@media (min-width: 961px){
+  .wrap{
+    grid-template-columns: 1.05fr .95fr;
+    grid-template-areas: "copy media"; /* desktop: texto | imagem */
+    gap: clamp(24px, 4.2vw, 46px);
+  }
+}
+.copy{  grid-area: copy; }
+.media{ grid-area: media; position: relative; }
+
+/* ===== Texto (menor e menos pesado) ===== */
+.title{
+  margin: 0 0 8px;
+  font-weight: 600; /* menos grosso */
+  letter-spacing: -0.015em;
+  font-size: clamp(24px, 4vw, 44px); /* menor */
+  line-height: 1.12;
+}
+.lead{
+  margin: 0 0 14px;
+  color: var(--text-muted);
+  font-size: clamp(15px, 1.45vw, 17px);
+  line-height: 1.48;
+  font-weight: 400;
+}
+
+/* ===== CTA Única ===== */
+.ctas{ display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+
+.ctaGhost{
+  display: inline-flex; align-items: center; justify-content: center;
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 11px 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color .18s ease, border-color .18s ease;
+}
+.ctaGhost:hover{ background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.2); }
+
+/* ===== Media ===== */
+.mediaFrame{
+  position: relative;
+  aspect-ratio: 4/3;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 40px rgba(0,0,0,.35);
+  background: #0b0d10;
+}
+.mediaImg{
+  object-fit: cover;
+  object-position: center;
+}

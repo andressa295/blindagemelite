@@ -1,3 +1,4 @@
+// src/app/components/PorQueAgora.tsx
 "use client";
 
 import { FaWhatsapp } from "react-icons/fa";
@@ -34,10 +35,10 @@ export default function PorQueAgora({ whatsappUrl }: Props) {
         </p>
 
         <ul className="impactFacts reveal in" data-i="3" aria-label="Benefícios imediatos">
-          <li><FiShield /> Proteção imediata</li>
-          <li><FiTrendingDown /> Evita prejuízo alto</li>
-          <li><FiClock /> Atendimento rápido</li>
-          <li><FiHome /> A domicílio</li>
+          <li><FiShield /><span>Proteção imediata</span></li>
+          <li><FiTrendingDown /><span>Evita prejuízo alto</span></li>
+          <li><FiClock /><span>Atendimento rápido</span></li>
+          <li><FiHome /><span>A domicílio</span></li>
         </ul>
 
         <div className="impactCtaCentered reveal in" data-i="4">
@@ -47,7 +48,7 @@ export default function PorQueAgora({ whatsappUrl }: Props) {
             aria-label="Garantir meu desconto pelo WhatsApp"
           >
             <FaWhatsapp size={18} />
-            <span style={{ marginLeft: 10 }}>Garantir meu desconto</span>
+            <span className="btnText">Garantir meu desconto</span>
           </button>
         </div>
       </div>
@@ -57,7 +58,7 @@ export default function PorQueAgora({ whatsappUrl }: Props) {
         .container { width: min(1140px, 92%); margin-inline: auto; }
         .section { padding: 18px 0 14px; }
 
-        /* Divisor premium (coeso com as outras seções) */
+        /* Divisor premium */
         .sectionDivider { position: relative; }
         .sectionDivider::after{
           content:""; position:absolute; left:50%; transform:translateX(-50%);
@@ -97,9 +98,10 @@ export default function PorQueAgora({ whatsappUrl }: Props) {
         .impactCopy{ color:#b7c0cb; margin:6px 0; }
         .impactCopy strong{ color:#fff; }
 
-        /* ===== Chips estáveis ===== */
+        /* ===== Chips estáveis (sem quebra interna) ===== */
         .impactFacts{
-          display:grid; grid-template-columns:repeat(2, minmax(0,1fr));
+          display:grid;
+          grid-template-columns:repeat(2, minmax(0,1fr)); /* mobile: 2 colunas */
           gap:8px; list-style:none; padding:0; margin:14px 0 10px;
         }
         .impactFacts li{
@@ -108,11 +110,23 @@ export default function PorQueAgora({ whatsappUrl }: Props) {
           background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10);
           color:#dbe2ea; font-weight:600;
           font-size:clamp(11.5px,3.2vw,13px);
-          text-align:center; line-height:1.2; min-height:36px;
+          line-height:1.2; min-height:36px;
+
+          /* ANTIESTOURO + LINHA ÚNICA */
+          min-width:0;                   /* permite encolher dentro do grid */
+          white-space:nowrap;            /* uma linha só */
+          overflow:hidden;               /* oculta excesso */
+          text-overflow:ellipsis;        /* ... no final */
         }
-        .impactFacts li :global(svg){ flex:0 0 auto; font-size:16px; }
+        .impactFacts li :global(svg){
+          flex:0 0 auto;                 /* ícone não encolhe */
+          font-size:16px;
+        }
+        .impactFacts li > :global(span){
+          min-width:0;                   /* texto pode encolher */
+        }
         @media (min-width:700px){
-          .impactFacts{ grid-template-columns:repeat(4, minmax(0,1fr)); }
+          .impactFacts{ grid-template-columns:repeat(4, minmax(0,1fr)); } /* desktop: 4 colunas */
           .impactFacts li{ font-size:13.2px; padding:8px 12px; }
         }
 
@@ -126,6 +140,7 @@ export default function PorQueAgora({ whatsappUrl }: Props) {
           font-size:14px;
         }
         .btnPrimary:hover{ transform:translateY(-1px) scale(1.015); }
+        .btnText{ margin-left:4px; }
 
         /* Reveal seguro */
         .reveal{ opacity:1; transform:none; transition:opacity .25s, transform .25s; }

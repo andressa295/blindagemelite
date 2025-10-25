@@ -1,21 +1,20 @@
 // src/app/components/Hero.tsx
 "use client";
 import Image from "next/image";
-import { useCallback, type ReactNode } from "react";
+import { useCallback, type ReactNode, type CSSProperties } from "react";
 
 type Props = {
   whatsappUrl: string;
   onScrollToOque?: () => void;
-  /** Opcional: um efeito extra por baixo (ex.: <VantaBackground className="vantaBlock" />) */
+  /** Opcional: efeito externo por baixo (evite usar junto para não sobrepor) */
   childrenEffect?: ReactNode;
 };
 
-/** Tipagem das CSS vars para evitar any */
-type HeroCSSVars = React.CSSProperties & {
-  "--fxOpacity"?: number | string;
-  "--fxSpeed"?: number | string;
-  "--gridOpacity"?: number | string;
-  "--gridSpeed"?: number | string;
+/** CSS vars tipadas */
+type HeroCSSVars = CSSProperties & {
+  "--auroraOpacity"?: number | string;  // força do efeito (0.0–1)
+  "--auroraSpeed"?: number | string;    // segundos por ciclo
+  "--auroraAngle"?: number | string;    // graus de inclinação
 };
 
 export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Props) {
@@ -23,12 +22,11 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   }, [whatsappUrl]);
 
-  /** ✔️ Sem any: CSS vars tipadas */
+  /** Ajuste fino do efeito (visível porém sutil) */
   const styleVars: HeroCSSVars = {
-    "--fxOpacity": 0.06,   // mais sutil: antes 0.10
-    "--fxSpeed": 48,       // s (maior = mais lento)
-    "--gridOpacity": 0.05, // alternativo
-    "--gridSpeed": 60,     // s
+    "--auroraOpacity": 0.12, // 0.10–0.18
+    "--auroraSpeed": 48,     // maior = mais lento
+    "--auroraAngle": 24,     // diagonal suave
   };
 
   return (
@@ -39,12 +37,14 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
       aria-describedby="hero-lead"
       style={styleVars}
     >
-      {/* Efeito externo opcional (Vanta) no fundo do fundo */}
+      {/* Se usar, fica por baixo de tudo (recomendado não misturar com o aurora) */}
       {childrenEffect}
 
-      {/* FUNDO EM MOVIMENTO — waves sutil (monocromático) */}
-      <div className="bg fx-waves" aria-hidden />
-      {/* Alternativa: <div className="bg fx-parallax-grid" aria-hidden /> */}
+      {/* ÚNICO EFEITO: AURORA RIBBONS */}
+      <div className="bg fx-aurora" aria-hidden>
+        {/* camada de textura suave */}
+        <i aria-hidden />
+      </div>
 
       <div className="container grid">
         {/* IMAGEM — primeiro no mobile */}
@@ -69,7 +69,7 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
           </figure>
         </div>
 
-        {/* TEXTO — clean */}
+        {/* TEXTO */}
         <div className="textCol">
           <p className="eyebrow">Proteção invisível · Resistência incomparável</p>
           <h1 className="h1" id="hero-title">Elite Blindagem: o futuro da proteção já chegou</h1>
@@ -81,7 +81,6 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
 
           <p className="subLead"><strong>É ciência aplicada à proteção do seu celular.</strong></p>
 
-          {/* CTAs lado a lado (no bem estreito vira grid 2x1) */}
           <div className="ctaRow">
             <button className="btnPrimary" onClick={openWhats} aria-label="Agendar avaliação pelo WhatsApp">
               Agendar agora
@@ -94,12 +93,12 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
       </div>
 
       <style jsx>{`
-        /* Base utilitária */
+        /* Utilitários */
         .container { width:min(1140px,92%); margin-inline:auto; }
         .srOnly { position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
         .contentVis { content-visibility:auto; contain-intrinsic-size: 1px 680px; }
 
-        /* HERO preto premium */
+        /* HERO */
         .hero{
           position:relative; isolation:isolate;
           padding: clamp(18px,4vw,26px) 0 clamp(16px,3vw,22px);
@@ -109,81 +108,76 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
         .bg{ position:absolute; inset:0; z-index:1; pointer-events:none; }
         .hero > .container{ position:relative; z-index:2; }
 
-        /* ========= EFEITO 1 — WAVES (AGORA MAIS INCOLOR E SUTIL) ========= */
-        .fx-waves{
-          --o: var(--fxOpacity);
-          --s: var(--fxSpeed);
-          background: #0b0f14;
-          overflow:hidden;
+        /* ========= AURORA RIBBONS =========
+           Duas faixas diagonais com conic/radial + blur, drift lento.
+           Uma camada extra (<i>) aplica granulação finíssima p/ dar “caro”.
+        */
+        .fx-aurora{
+          --o: var(--auroraOpacity);
+          --spd: var(--auroraSpeed);
+          --ang: var(--auroraAngle);
+          position:absolute; inset:0; overflow:hidden;
+          background:#0b0f14;
         }
-        .fx-waves::before,
-        .fx-waves::after{
-          content:""; position:absolute; inset:-10% -10%; pointer-events:none;
+        .fx-aurora::before,
+        .fx-aurora::after{
+          content:""; position:absolute; inset:-18%;
+          transform: rotate(calc(var(--ang) * 1deg));
+          filter: blur(26px);
+          mix-blend-mode: screen; /* luz sobre fundo escuro */
+          opacity: calc(var(--o) + 0.02);
+          animation: auroraDrift var(--spd)s ease-in-out infinite alternate;
           background:
-            /* linhas verticais hairline em cinza-azulado discreto */
-            repeating-linear-gradient( to right,
-              rgba(180, 195, 220, calc(var(--o) * 0.12)) 0 1px,
-              rgba(180, 195, 220, 0) 1px 26px
-            ),
-            /* véu vertical quase imperceptível */
-            linear-gradient(180deg,
-              rgba(180, 195, 220, calc(var(--o) * 0.03)) 0%,
-              rgba(180, 195, 220, 0) 38%
-            );
-          filter: blur(4px);
-          mix-blend-mode: soft-light;
-          animation: waves var(--s)s linear infinite;
-          opacity: 0.7;
+            /* faixa 1 (fria) */
+            radial-gradient(80% 40% at 20% 30%, rgba(120,160,255,.24) 0%, transparent 60%),
+            conic-gradient(from 0deg at 50% 50%,
+              rgba(110,150,255,.24) 0 25%,
+              rgba(160,210,255,.10) 25% 45%,
+              transparent 45% 100%);
         }
-        .fx-waves::after{
-          animation-duration: calc(var(--s) * 1.35s);
-          animation-direction: reverse;
-          opacity: 0.5;
-          transform: translateY(2%);
-        }
-        /* terceira camada mais distante e mais leve */
-        .fx-waves > i{
-          position:absolute; inset:-12% -12%;
+        .fx-aurora::after{
+          transform: rotate(calc(var(--ang) * -1deg));
+          opacity: calc(var(--o) + 0.01);
+          animation-duration: calc(var(--spd) * 1.35s);
           background:
-            repeating-linear-gradient( to right,
-              rgba(180, 195, 220, calc(var(--o) * 0.08)) 0 1px,
-              rgba(180, 195, 220, 0) 1px 32px
-            );
-          filter: blur(8px);
+            /* faixa 2 (neutra/metal) */
+            radial-gradient(70% 35% at 80% 60%, rgba(200,220,255,.18) 0%, transparent 62%),
+            conic-gradient(from 180deg at 50% 50%,
+              rgba(180,195,220,.16) 0 18%,
+              rgba(255,255,255,.06) 18% 40%,
+              transparent 40% 100%);
+        }
+
+        /* Textura finíssima: simula “fibra/ruído” muito discreto */
+        .fx-aurora > i{
+          position:absolute; inset:-2%;
+          opacity: calc(var(--o) * 0.65);
           mix-blend-mode: soft-light;
-          animation: wavesFar calc(var(--s) * 1.9s) linear infinite;
-          opacity: 0.4;
+          background:
+            repeating-linear-gradient(
+              90deg,
+              rgba(200,210,230,.045) 0 1px,
+              rgba(200,210,230,0) 1px 22px
+            );
+          filter: blur(3px);
+          animation: grainShift calc(var(--spd) * 1.8s) linear infinite;
         }
-        @supports (mask-image: linear-gradient(#000, #000)) {
-          .fx-waves::before { mask-image: radial-gradient(120% 90% at 50% 6%, #000 0%, transparent 80%); }
-          .fx-waves::after  { mask-image: radial-gradient(130% 100% at 50% 8%, #000 0%, transparent 82%); }
+
+        @keyframes auroraDrift {
+          0%   { transform: translate3d(-2%, -1%, 0) rotate(var(--ang)); }
+          100% { transform: translate3d( 2%,  1%, 0) rotate(var(--ang)); }
         }
-        @keyframes waves {
-          from { background-position: 0 0, 0 0; }
-          to   { background-position: 120px 0, 0 0; }
-        }
-        @keyframes wavesFar {
+        @keyframes grainShift {
           from { background-position: 0 0; }
-          to   { background-position: 200px 0; }
+          to   { background-position: 120px 0; }
         }
 
-        /* ========= EFEITO 2 — PARALLAX GRID (ALTERNATIVO) ========= */
-        .fx-parallax-grid{
-          --o: var(--gridOpacity);
-          --spd: var(--gridSpeed);
-          background:
-            repeating-linear-gradient( 90deg, rgba(180,195,220, calc(var(--o)*.55)) 0 1px, transparent 1px 28px ),
-            repeating-linear-gradient(   0deg, rgba(180,195,220, calc(var(--o)*.45)) 0 1px, transparent 1px 28px ),
-            #0b0f14;
-          mask-image: radial-gradient(130% 100% at 50% 10%, #000 0%, transparent 82%);
-          animation: gridDrift var(--spd)s linear infinite;
-        }
-        @keyframes gridDrift {
-          from { background-position: 0 0, 0 0; }
-          to   { background-position: 40px 16px, -28px 24px; }
+        /* Fallback quando não rolar blend avançado/mask — sobe opacidade */
+        @supports not (mix-blend-mode: screen) {
+          .fx-aurora::before, .fx-aurora::after { mix-blend-mode: normal; opacity: calc(var(--o) + .08); }
         }
 
-        /* GRID do conteúdo — imagem primeiro no mobile */
+        /* Grid conteúdo */
         .grid{
           display:grid; gap: clamp(16px,3vw,26px);
           grid-template-columns: 1fr; align-items:start;
@@ -195,7 +189,7 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
           .textCol { padding-top:4px; }
         }
 
-        /* Tipografia clean, menor */
+        /* Tipografia */
         .eyebrow{
           color:#c6ced9; opacity:.9; margin:0 0 8px;
           font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700;
@@ -210,7 +204,7 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
         .lead{ font-size: clamp(14.6px,1.35vw,16.2px); line-height:1.58; }
         .subLead strong{ color:#fff; font-weight:720; }
 
-        /* CTAs lado a lado (sem quebrar) */
+        /* CTAs */
         .ctaRow{ margin-top:14px; display:flex; gap:12px; flex-wrap:nowrap; }
         .btnPrimary, .btnGhost{
           border-radius:999px; padding:12px 18px; font-weight:820; letter-spacing:.01em; cursor:pointer;
@@ -226,7 +220,7 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
           .btnPrimary, .btnGhost{ width:100%; padding:10px 12px; font-size:14px; }
         }
 
-        /* Mídia — sem borda branca */
+        /* Mídia */
         .frame{
           margin:0; border-radius:18px; overflow:hidden; border:0; background:#0b0f14;
           box-shadow: 0 10px 26px rgba(0,0,0,.45);
@@ -254,15 +248,11 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
           box-shadow:0 8px 18px rgba(0,0,0,.28);
         }
 
-        /* Respeita reduce motion */
+        /* Acessibilidade */
         @media (prefers-reduced-motion: reduce){
-          .fx-waves, .fx-parallax-grid { animation: none !important; }
-          .fx-waves::before, .fx-waves::after { animation: none !important; }
+          .fx-aurora, .fx-aurora::before, .fx-aurora::after, .fx-aurora > i { animation: none !important; }
         }
       `}</style>
-
-      {/* terceira camada waves (distante) — elemento real p/ compatibilidade */}
-      <i aria-hidden />
     </section>
   );
 }

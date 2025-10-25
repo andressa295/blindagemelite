@@ -39,9 +39,6 @@ export default function Page() {
 
       <hr className="hr" />
 
-      {/* Bloco 1: o que é a blindagem */}
-      <OqueE />
-
       {/* Bloco 2: atendimento a domicílio, com efeito sutil */}
       <Domicilio
         whatsappUrl={whatsappUrl}
@@ -53,9 +50,11 @@ export default function Page() {
           />
         }
       />
-
       {/* Bloco 3: por que fazer agora */}
       <PorQueAgora whatsappUrl={whatsappUrl} />
+{/* Bloco 1: o que é a blindagem */}
+      <OqueE />
+      
 
       {/* Bloco 4: por que escolher a elite blindagem */}
       <PorQueEscolher />
