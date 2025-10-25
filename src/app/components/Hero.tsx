@@ -1,4 +1,4 @@
-// components/Hero.tsx
+// src/app/components/Hero.tsx
 "use client";
 import Image from "next/image";
 import { useCallback, type ReactNode } from "react";
@@ -10,10 +10,26 @@ type Props = {
   childrenEffect?: ReactNode;
 };
 
+/** Tipagem das CSS vars para evitar any */
+type HeroCSSVars = React.CSSProperties & {
+  "--fxOpacity"?: number | string;
+  "--fxSpeed"?: number | string;
+  "--gridOpacity"?: number | string;
+  "--gridSpeed"?: number | string;
+};
+
 export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Props) {
   const openWhats = useCallback(() => {
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   }, [whatsappUrl]);
+
+  /** ✔️ Sem any: CSS vars tipadas */
+  const styleVars: HeroCSSVars = {
+    "--fxOpacity": 0.06,   // mais sutil: antes 0.10
+    "--fxSpeed": 48,       // s (maior = mais lento)
+    "--gridOpacity": 0.05, // alternativo
+    "--gridSpeed": 60,     // s
+  };
 
   return (
     <section
@@ -21,22 +37,14 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
       className="hero contentVis"
       aria-labelledby="hero-title"
       aria-describedby="hero-lead"
-      /* knobs rápidos: 0–1 (intensidade) | segundos (velocidade) */
-      style={
-        {
-          ["--fxOpacity" as any]: 0.10,   // opacidade das ondas (suba p/ 0.14–0.18 se quiser mais visível)
-          ["--fxSpeed" as any]: 48,       // velocidade das ondas (s) — maior = mais lento
-          ["--gridOpacity" as any]: 0.08, // opacidade do grid alternativo
-          ["--gridSpeed" as any]: 60,     // velocidade do grid (s)
-        } as React.CSSProperties
-      }
+      style={styleVars}
     >
       {/* Efeito externo opcional (Vanta) no fundo do fundo */}
       {childrenEffect}
 
-      {/* FUNDO EM MOVIMENTO — escolha 1: waves (padrão) OU parallax-grid (troque a classe) */}
+      {/* FUNDO EM MOVIMENTO — waves sutil (monocromático) */}
       <div className="bg fx-waves" aria-hidden />
-      {/* <div className="bg fx-parallax-grid" aria-hidden /> */}
+      {/* Alternativa: <div className="bg fx-parallax-grid" aria-hidden /> */}
 
       <div className="container grid">
         {/* IMAGEM — primeiro no mobile */}
@@ -101,9 +109,7 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
         .bg{ position:absolute; inset:0; z-index:1; pointer-events:none; }
         .hero > .container{ position:relative; z-index:2; }
 
-        /* ========= EFEITO 1 — WAVES (MOVIMENTO NOVO) =========
-           Ondas verticais suaves deslizando para a direita, monocromáticas.
-           Três camadas com fases diferentes para profundidade. */
+        /* ========= EFEITO 1 — WAVES (AGORA MAIS INCOLOR E SUTIL) ========= */
         .fx-waves{
           --o: var(--fxOpacity);
           --s: var(--fxSpeed);
@@ -114,39 +120,40 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
         .fx-waves::after{
           content:""; position:absolute; inset:-10% -10%; pointer-events:none;
           background:
+            /* linhas verticais hairline em cinza-azulado discreto */
             repeating-linear-gradient( to right,
-              rgba(255,255,255, calc(var(--o) * 0.28)) 0 1px,
-              rgba(255,255,255, 0) 1px 26px
+              rgba(180, 195, 220, calc(var(--o) * 0.12)) 0 1px,
+              rgba(180, 195, 220, 0) 1px 26px
             ),
-            linear-gradient(180deg, rgba(255,255,255, calc(var(--o) * 0.06)) 0%, rgba(255,255,255,0) 38%);
+            /* véu vertical quase imperceptível */
+            linear-gradient(180deg,
+              rgba(180, 195, 220, calc(var(--o) * 0.03)) 0%,
+              rgba(180, 195, 220, 0) 38%
+            );
           filter: blur(4px);
           mix-blend-mode: soft-light;
           animation: waves var(--s)s linear infinite;
-          opacity: 1;
+          opacity: 0.7;
         }
         .fx-waves::after{
-          /* segunda camada defasada (parallax) */
           animation-duration: calc(var(--s) * 1.35s);
           animation-direction: reverse;
-          opacity: 0.9;
+          opacity: 0.5;
           transform: translateY(2%);
         }
-        /* terceira camada real, mais distante e mais suave */
-        .fx-waves::marker { display:none } /* hack para evitar warnings */
-        .fx-waves:has(*){} /* no-op para manter escopo */
+        /* terceira camada mais distante e mais leve */
         .fx-waves > i{
           position:absolute; inset:-12% -12%;
           background:
             repeating-linear-gradient( to right,
-              rgba(255,255,255, calc(var(--o) * 0.18)) 0 1px,
-              rgba(255,255,255, 0) 1px 32px
+              rgba(180, 195, 220, calc(var(--o) * 0.08)) 0 1px,
+              rgba(180, 195, 220, 0) 1px 32px
             );
           filter: blur(8px);
           mix-blend-mode: soft-light;
           animation: wavesFar calc(var(--s) * 1.9s) linear infinite;
-          opacity: 0.7;
+          opacity: 0.4;
         }
-        /* injetamos o <i> por CSS via content apenas quando o browser suporta */
         @supports (mask-image: linear-gradient(#000, #000)) {
           .fx-waves::before { mask-image: radial-gradient(120% 90% at 50% 6%, #000 0%, transparent 80%); }
           .fx-waves::after  { mask-image: radial-gradient(130% 100% at 50% 8%, #000 0%, transparent 82%); }
@@ -160,14 +167,13 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
           to   { background-position: 200px 0; }
         }
 
-        /* ========= EFEITO 2 — PARALLAX GRID (ALTERNATIVO) =========
-           Linhas hairline animando diagonal, super discreto. */
+        /* ========= EFEITO 2 — PARALLAX GRID (ALTERNATIVO) ========= */
         .fx-parallax-grid{
           --o: var(--gridOpacity);
           --spd: var(--gridSpeed);
           background:
-            repeating-linear-gradient( 90deg, rgba(255,255,255, calc(var(--o)*.85)) 0 1px, transparent 1px 28px ),
-            repeating-linear-gradient(   0deg, rgba(255,255,255, calc(var(--o)*.65)) 0 1px, transparent 1px 28px ),
+            repeating-linear-gradient( 90deg, rgba(180,195,220, calc(var(--o)*.55)) 0 1px, transparent 1px 28px ),
+            repeating-linear-gradient(   0deg, rgba(180,195,220, calc(var(--o)*.45)) 0 1px, transparent 1px 28px ),
             #0b0f14;
           mask-image: radial-gradient(130% 100% at 50% 10%, #000 0%, transparent 82%);
           animation: gridDrift var(--spd)s linear infinite;
@@ -255,7 +261,7 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
         }
       `}</style>
 
-      {/* terceira camada waves (distante) — elemento real para browsers que não aplicam ::before+::after corretamente */}
+      {/* terceira camada waves (distante) — elemento real p/ compatibilidade */}
       <i aria-hidden />
     </section>
   );
