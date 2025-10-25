@@ -26,11 +26,16 @@ export default function Page() {
 
       {/* Hero principal */}
       <Hero
-        whatsappUrl={whatsappUrl}
-        onScrollToOque={scrollToOque}
-        // efeito Vanta opcional só no hero
-        // childrenEffect={<VantaBackground bgColor={0xf4f6f8} lineColor={0x0f1115} />}
-      />
+  whatsappUrl={whatsappUrl}
+  onScrollToOque={scrollToOque}
+  childrenEffect={
+    <VantaBackground
+      className="vantaBlock"  // CSS do Hero já posiciona atrás
+      bgColor={0x0b0f14}      // preto do hero
+      lineColor={0x1a222d}    // linhas em cinza-azulado escuro
+    />
+  }
+/>
 
       <hr className="hr" />
 

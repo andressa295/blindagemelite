@@ -18,10 +18,7 @@ export default function OqueE() {
         </p>
 
         {/* Chips resumindo benefícios */}
-        <div className="chips twoCol reveal in" style={{ marginTop: 8 }} aria-label="Benefícios principais">
-          <span className="chip">Sem película</span>
-          <span className="chip">Sem alterar o toque</span>
-        </div>
+        
 
         <ul className="bullets contentMax reveal in" data-i="2">
           <li>Até <strong>10× mais resistência</strong> contra quedas e impactos.</li>
