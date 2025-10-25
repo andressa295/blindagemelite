@@ -1,0 +1,10 @@
+export { default as HeaderDark } from "./HeaderDark";
+export { default as Hero } from "./Hero";
+export { default as OqueE } from "./OqueE";
+export { default as Domicilio } from "./Domicilio";
+export { default as PorQueAgora } from "./PorQueAgora";
+export { default as PorQueEscolher } from "./PorQueEscolher";
+export { default as Reviews } from "./Reviews";
+export { default as CTAFinal } from "./CTAFinal";
+export { default as WhatsFloat } from "./WhatsFloat";
+export { default as VantaBackground } from "./VantaBackground";
