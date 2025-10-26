@@ -1,100 +1,77 @@
-// src/app/components/Hero.tsx
 "use client";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, type ReactNode, type CSSProperties } from "react";
+import { useEffect, useRef } from "react";
 
-type Props = {
+type HeroProps = {
   whatsappUrl: string;
   onScrollToOque?: () => void;
-  /** Opcional: efeito externo por baixo (evite usar junto para não sobrepor) */
-  childrenEffect?: ReactNode;
+  devicePhoneSrc?: string;
+  deviceWatchSrc?: string;
 };
 
-type HeroCSSVars = CSSProperties & {
-  "--ionOpacity"?: number | string;  // 0–1
-  "--ionSpeed"?: number | string;    // s
-  "--ionAngle"?: number | string;    // deg
-};
+export default function Hero({
+  whatsappUrl,
+  onScrollToOque,
+  devicePhoneSrc = "/mobile.png",
+  deviceWatchSrc = "/relogio.png",
+}: HeroProps) {
+  const heroRef = useRef<HTMLElement>(null);
 
-export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Props) {
-  const openWhats = useCallback(() => {
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-  }, [whatsappUrl]);
-
-  // Garantir que o título NÃO fica invisível
-  const titleRef = useRef<HTMLHeadingElement | null>(null);
   useEffect(() => {
-    const el = titleRef.current;
+    const el = heroRef.current;
     if (!el) return;
-    // Mostra já (sem depender de observer)
-    el.classList.add("revealActive");
+    requestAnimationFrame(() => el.classList.add("play"));
   }, []);
 
-  const styleVars: HeroCSSVars = {
-    "--ionOpacity": 0.26, // mais presente no preto; ajuste fino: 0.22–0.32
-    "--ionSpeed": 42,
-    "--ionAngle": 26,
-  };
+  const openWhats = () =>
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
 
   return (
-    <section
-      id="topo"
-      className="hero contentVis"
-      aria-labelledby="hero-title"
-      aria-describedby="hero-lead"
-      style={styleVars}
-    >
-      {/* efeito externo opcional (fica por baixo) */}
-      {childrenEffect}
-
-      {/* ===== EFEITO ÚNICO: ION GLOW (visível em preto puro) ===== */}
-      <div className="bg fx-ion" aria-hidden>
-        <i aria-hidden />
+    <section ref={heroRef} className="hero">
+      {/* === FAÍSCAS DE FUNDO === */}
+      <div className="sparks" aria-hidden>
+        {Array.from({ length: 22 }).map((_, i) => (
+          <span key={i} className="spark" />
+        ))}
       </div>
 
-      <div className="container grid">
-        {/* IMAGEM */}
+      <div className="container">
         <div className="mediaCol">
-          <figure className="frame" aria-label="Dispositivo blindado">
-            <div className="glass">
-              <div className="vignette" aria-hidden />
+          <div className="deviceWrapper">
+            <div className="watch">
               <Image
-                src="/elite.jpg"
-                alt="Dispositivo protegido por nanoproteção com titânio"
+                src={deviceWatchSrc}
+                alt="Relógio blindado"
                 fill
-                sizes="(max-width: 900px) 100vw, 50vw"
                 priority
-                className="img"
+                style={{ objectFit: "contain" }}
               />
-              <div className="badge" role="note">
-                <Image src="/blindagem.png" alt="" width={18} height={18} />
-                <span>Nanoproteção com titânio</span>
-              </div>
             </div>
-            <figcaption className="srOnly">Acabamento de fábrica, sem ruído</figcaption>
-          </figure>
+            <div className="phone">
+              <Image
+                src={devicePhoneSrc}
+                alt="Celular blindado"
+                fill
+                priority
+                style={{ objectFit: "contain" }}
+              />
+            </div>
+          </div>
         </div>
 
-        {/* TEXTO */}
         <div className="textCol">
-          <p className="eyebrow">Proteção invisível · Resistência incomparável</p>
-
-          <h1 className="h1 revealInit" id="hero-title" ref={titleRef}>
-            Elite Blindagem: o futuro da proteção já chegou
-          </h1>
-
-          <p className="lead" id="hero-lead">
-            A Elite Blindagem traz ao Brasil uma tecnologia de <strong>nanoproteção com titânio</strong> que cria
-            uma camada invisível e ultra-resistente, mantendo seu aparelho com aparência de novo por muito mais tempo.
+          <h1 className="title">Elite Blindagem</h1>
+          <h2 className="subtitle">O futuro da proteção já chegou</h2>
+          <p className="lead">
+            Tecnologia de <strong>nanoproteção com titânio</strong> — cria uma
+            camada invisível e ultra-resistente, mantendo seu aparelho com
+            aparência de novo por muito mais tempo.
           </p>
-
-          <p className="subLead"><strong>É ciência aplicada à proteção do seu celular.</strong></p>
-
           <div className="ctaRow">
-            <button className="btnPrimary" onClick={openWhats} aria-label="Agendar avaliação pelo WhatsApp">
+            <button className="btnPrimary" onClick={openWhats}>
               Agendar agora
             </button>
-            <button className="btnGhost" onClick={onScrollToOque} aria-label="Saber o que é a blindagem">
+            <button className="btnGhost" onClick={onScrollToOque}>
               O que é a blindagem?
             </button>
           </div>
@@ -102,147 +79,267 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
       </div>
 
       <style jsx>{`
-        /* Utilitários */
-        .container { width:min(1140px,92%); margin-inline:auto; }
-        .srOnly { position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
-        .contentVis { content-visibility:auto; contain-intrinsic-size: 1px 680px; }
-
-        /* HERO */
-        .hero{
-          position:relative; isolation:isolate;
-          padding: clamp(18px,4vw,26px) 0 clamp(16px,3vw,22px);
-          background:#000; /* preto absoluto */
-          color:#eef2f7; overflow:clip;
+        .hero {
+          position: relative;
+          background: #000;
+          color: #eef2f7;
+          padding: clamp(40px, 6vw, 80px) 0;
+          overflow: hidden;
+          opacity: 0;
+          transform: scale(1.02);
+          transition: opacity 0.5s ease, transform 0.6s ease;
         }
-        :global(.vantaBlock){ position:absolute; inset:0; z-index:0; pointer-events:none; }
-        .bg{ position:absolute; inset:0; z-index:1; pointer-events:none; }
-        .hero > .container{ position:relative; z-index:2; }
-
-        /* ========= ION GLOW =========
-           - 100% visível em preto (#000), sem blend-modes.
-           - Duas faixas diagonais + textura leve.
-        */
-        .fx-ion{
-          --o: var(--ionOpacity);
-          --spd: var(--ionSpeed);
-          --ang: var(--ionAngle);
-          position:absolute; inset:0; overflow:hidden;
-          background:
-            radial-gradient(120% 80% at 50% -10%, rgba(55,85,150, calc(var(--o)*.35)), rgba(0,0,0,0) 70%),
-            #000;
+        .hero.play {
+          opacity: 1;
+          transform: scale(1);
         }
-        .fx-ion::before,
-        .fx-ion::after{
-          content:""; position:absolute; inset:-22%;
-          filter: blur(28px);
-          opacity: calc(var(--o) + 0.06);
-          animation: ionDrift var(--spd)s ease-in-out infinite alternate;
+        .container {
+          width: min(1140px, 92%);
+          margin: auto;
+          display: grid;
+          gap: 40px;
+          align-items: center;
+          position: relative;
+          z-index: 2;
         }
-        /* faixa 1 (lado esquerdo -> centro) */
-        .fx-ion::before{
-          transform: rotate(calc(var(--ang) * 1deg));
-          background:
-            radial-gradient(60% 40% at 18% 32%, rgba(84,148,255,.34), rgba(0,0,0,0) 62%),
-            linear-gradient(90deg, rgba(24,120,255,.22), rgba(0,0,0,0) 60%);
-        }
-        /* faixa 2 (lado direito -> centro) */
-        .fx-ion::after{
-          transform: rotate(calc(var(--ang) * -1deg));
-          opacity: calc(var(--o) + 0.05);
-          animation-duration: calc(var(--spd) * 1.35s);
-          background:
-            radial-gradient(58% 38% at 82% 62%, rgba(180,198,255,.26), rgba(0,0,0,0) 64%),
-            linear-gradient(270deg, rgba(220,235,255,.14), rgba(0,0,0,0) 60%);
-        }
-        /* textura sutil */
-        .fx-ion > i{
-          position:absolute; inset:-2%;
-          opacity: calc(var(--o) * .40);
-          background: repeating-linear-gradient(90deg, rgba(190,205,255,.045) 0 1px, transparent 1px 20px);
-          filter: blur(2px);
-          animation: ionGrain calc(var(--spd) * 1.6s) linear infinite;
+        @media (min-width: 900px) {
+          .container {
+            grid-template-columns: 1fr 1fr;
+          }
         }
 
-        @keyframes ionDrift {
-          0%   { transform: translate3d(-2%, -1%, 0); }
-          100% { transform: translate3d( 2%,  1%, 0); }
+        /* === PARTICLES / FAÍSCAS === */
+        .sparks {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          z-index: 0;
         }
-        @keyframes ionGrain {
-          from { background-position: 0 0; }
-          to   { background-position: 120px 0; }
+        .spark {
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          width: 2px;
+          height: 20px;
+          background: linear-gradient(180deg, #fff, transparent);
+          border-radius: 2px;
+          opacity: 0;
+          transform: translateX(-50%) scaleY(0.5);
+          animation: rise 4s linear infinite;
         }
-
-        /* Grid */
-        .grid{
-          display:grid; gap: clamp(16px,3vw,26px);
-          grid-template-columns: 1fr; align-items:start;
+        .spark:nth-child(odd) {
+          background: linear-gradient(180deg, #a6bfff, transparent);
         }
-        .mediaCol { order:-1; }
-        @media (min-width:900px){
-          .grid{ grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr); gap: clamp(20px,3vw,28px); }
-          .mediaCol { order:initial; }
-          .textCol { padding-top:4px; }
+        .spark:nth-child(3n) {
+          background: linear-gradient(180deg, #ffffff, transparent);
+          width: 3px;
         }
-
-        /* Tipografia */
-        .eyebrow{
-          color:#c6ced9; opacity:.9; margin:0 0 8px;
-          font-size:12.8px; letter-spacing:.12em; text-transform:uppercase; font-weight:700;
-          white-space: nowrap;
+        .spark {
+          --x: calc((var(--i, 0) - 10) * 4%);
         }
-        @media (max-width:420px){ .eyebrow{ font-size:12px; letter-spacing:.10em; } }
-        @media (max-width:360px){ .eyebrow{ font-size:11px; letter-spacing:.085em; } }
-        @media (max-width:330px){ .eyebrow{ font-size:10.2px; letter-spacing:.075em; } }
-
-        .h1{
-          margin:0 0 8px; color:#fff;
-          font-size: clamp(22px, 3vw, 32px);
-          line-height:1.16; font-weight:680; letter-spacing:.003em;
-          text-wrap: balance;
+        .spark:nth-child(n) {
+          left: calc(50% - 200px + (var(--n) * 16px));
         }
-        .lead, .subLead{ color:#d6dce6; margin:6px 0 0; max-width:62ch; }
-        .lead{ font-size: clamp(14.6px,1.35vw,16.2px); line-height:1.58; }
-        .subLead strong{ color:#fff; font-weight:720; }
-
-        /* Reveal sutil (título) — agora seguro */
-        .revealInit{ opacity:1; transform:none; } /* visível por padrão */
-        .revealActive{ animation: popIn .36s cubic-bezier(.22,.61,.36,1); }
-        @keyframes popIn {
-          from { opacity:.0; transform: translateY(8px) scale(.995); }
-          to   { opacity:1;  transform: translateY(0)  scale(1); }
+        .sparks span {
+          --i: calc(var(--n) * 1);
         }
-        @media (prefers-reduced-motion: reduce){
-          .revealActive{ animation:none; }
+        .sparks .spark {
+          left: calc(2% + 96% * var(--random, 0.5));
         }
-
-        /* CTAs */
-        .ctaRow{ margin-top:14px; display:flex; gap:12px; flex-wrap:nowrap; }
-        .btnPrimary, .btnGhost{
-          border-radius:999px; padding:12px 18px; font-weight:820; letter-spacing:.01em; cursor:pointer;
-          transition: transform .12s ease, background .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
-          white-space:nowrap; min-width:0;
-        }
-        .btnPrimary{ background:#141a22; color:#fff; border:1px solid #0f1419; box-shadow:0 8px 18px rgba(0,0,0,.20); }
-        .btnPrimary:hover{ transform:translateY(-1px); box-shadow:0 12px 26px rgba(0,0,0,.24); }
-        .btnGhost{ background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.22); backdrop-filter: blur(6px); }
-        .btnGhost:hover{ transform:translateY(-1px); background:rgba(255,255,255,.12); }
-        @media (max-width:520px){
-          .ctaRow{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-          .btnPrimary, .btnGhost{ width:100%; padding:10px 12px; font-size:14px; }
+        @keyframes rise {
+          0% {
+            transform: translateY(100%) scaleY(0.5);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          50% {
+            transform: translateY(-80%) scaleY(1);
+            opacity: 0.8;
+          }
+          100% {
+            transform: translateY(-120%) scaleY(0.6);
+            opacity: 0;
+          }
         }
 
-        /* Mídia */
-        .frame{ margin:0; border-radius:18px; overflow:hidden; border:0; background:#000; box-shadow: 0 10px 26px rgba(0,0,0,.45); transform: translateZ(0); }
-        .glass{ position:relative; width:100%; min-height: clamp(360px, 48vh, 560px); display:flex; align-items:center; justify-content:center; background:#000; }
-        .img{ object-fit:cover; object-position:50% 30%; filter: saturate(1.04) contrast(1.02); }
-        .vignette{ position:absolute; inset:0; pointer-events:none; background:
-            linear-gradient(180deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 32%),
-            radial-gradient(120% 120% at 100% 100%, rgba(0,0,0,.22), transparent 52%); mix-blend-mode:multiply; }
-        .badge{ position:absolute; left:12px; bottom:12px; z-index:1; display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.94); border:1px solid #e6e8ec; border-radius:999px; padding:6px 10px; color:#0c1117; font-size:12.3px; font-weight:780; box-shadow:0 8px 18px rgba(0,0,0,.28); }
+        /* === DEVICE MOTION === */
+        .deviceWrapper {
+          position: relative;
+          width: clamp(280px, 34vw, 520px);
+          aspect-ratio: 1/1.8;
+          margin: auto;
+        }
+        .watch,
+        .phone {
+          position: absolute;
+          inset: 0;
+          opacity: 0;
+          filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
+        }
+        .hero.play .watch {
+          animation: watchEnter 1.2s cubic-bezier(0.25, 1, 0.3, 1) forwards;
+        }
+        .hero.play .phone {
+          animation: phoneEnter 1.3s cubic-bezier(0.25, 1, 0.3, 1) 2.3s forwards;
+        }
+        @keyframes watchEnter {
+          0% {
+            opacity: 0;
+            transform: translate(-120%, 80%) rotate(-40deg) scale(0.7);
+          }
+          70% {
+            opacity: 1;
+            transform: translate(-30%, -10%) rotate(10deg) scale(1.05);
+          }
+          100% {
+            opacity: 1;
+            transform: translate(0%, 0%) rotate(0deg) scale(1);
+          }
+        }
+        @keyframes phoneEnter {
+          0% {
+            opacity: 0;
+            transform: translateY(-160%) rotate(15deg) scale(0.8);
+          }
+          60% {
+            opacity: 1;
+            transform: translateY(12%) rotate(-6deg) scale(1.05);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) rotate(0deg) scale(1);
+          }
+        }
 
-        /* Motion safe */
-        @media (prefers-reduced-motion: reduce){
-          .fx-ion, .fx-ion::before, .fx-ion::after, .fx-ion > i { animation: none !important; }
+        /* === TEXT ANIMATION === */
+        .textCol {
+          opacity: 0;
+          animation: textIn 0.8s ease 3.6s forwards;
+        }
+        @keyframes textIn {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .title {
+          font-size: clamp(30px, 3vw, 48px);
+          font-weight: 800;
+          margin: 0 0 8px;
+          text-transform: uppercase;
+          background: linear-gradient(90deg, #e8ecff 0%, #6f7dff 25%, #ffffff 50%, #6f7dff 75%, #e8ecff 100%);
+          background-size: 300% 100%;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: forgeText 2.4s ease-in-out 1.2s forwards,
+            shineMove 4s linear 3.4s infinite;
+          opacity: 0;
+        }
+        .hero.play .title {
+          opacity: 1;
+        }
+        @keyframes forgeText {
+          0% {
+            opacity: 0;
+            letter-spacing: 0.2em;
+            transform: scale(1.2) rotateX(40deg);
+            filter: blur(6px);
+          }
+          70% {
+            opacity: 1;
+            letter-spacing: 0.05em;
+            transform: scale(1) rotateX(0deg);
+            filter: blur(0);
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+        @keyframes shineMove {
+          0% {
+            background-position: 0% 0%;
+          }
+          100% {
+            background-position: 300% 0%;
+          }
+        }
+
+        .subtitle {
+          font-size: clamp(18px, 1.8vw, 22px);
+          font-weight: 600;
+          margin: 6px 0 16px;
+          color: #b7c2ff;
+          opacity: 0;
+          transform: translateY(20px);
+          animation: subAppear 0.8s cubic-bezier(0.25, 1, 0.3, 1) 2.6s forwards;
+        }
+        @keyframes subAppear {
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .lead {
+          color: #d6dce6;
+          font-size: clamp(15px, 1.3vw, 16.4px);
+          line-height: 1.6;
+          max-width: 52ch;
+          margin-bottom: 22px;
+        }
+
+        /* === CTA BUTTONS === */
+        .ctaRow {
+          display: flex;
+          gap: 12px;
+          opacity: 0;
+          animation: btnRise 0.9s cubic-bezier(0.25, 1, 0.3, 1) 4.2s forwards;
+        }
+        @keyframes btnRise {
+          0% {
+            transform: translateY(40px) scale(0.95);
+            opacity: 0;
+          }
+          70% {
+            opacity: 1;
+            transform: translateY(-6px) scale(1.02);
+          }
+          100% {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+          }
+        }
+        .btnPrimary,
+        .btnGhost {
+          border-radius: 999px;
+          padding: 12px 18px;
+          font-weight: 800;
+          cursor: pointer;
+          transition: 0.2s ease;
+        }
+        .btnPrimary {
+          background: #141a22;
+          color: #fff;
+          border: 1px solid #0f1419;
+          box-shadow: 0 0 20px rgba(111, 125, 255, 0.3);
+        }
+        .btnPrimary:hover {
+          background: #1a2230;
+          box-shadow: 0 0 25px rgba(111, 125, 255, 0.45);
+        }
+        .btnGhost {
+          background: rgba(255, 255, 255, 0.08);
+          color: #fff;
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          backdrop-filter: blur(6px);
+        }
+        .btnGhost:hover {
+          background: rgba(255, 255, 255, 0.12);
         }
       `}</style>
     </section>

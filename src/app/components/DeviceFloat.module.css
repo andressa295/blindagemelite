@@ -1,0 +1,76 @@
+.deviceFloat{
+  width: var(--w, 420px);
+  max-width: 76vw;
+  position: relative;
+  transform-style: preserve-3d;
+  /* idle float */
+  animation: df-float 6.5s ease-in-out infinite;
+  will-change: transform, filter;
+}
+
+.deviceFloat__inner{
+  transform:
+    translate3d(var(--dx, 0), var(--dy, 0), 0)
+    rotateX(var(--rx, 0))
+    rotateY(var(--ry, 0))
+    rotateZ(-3deg);
+  transition: filter .25s ease;
+  transform-style: preserve-3d;
+}
+
+.deviceFloat__inner img{
+  display:block;
+  width:100%;
+  height:auto;
+  pointer-events:none;
+  user-select:none;
+}
+
+.deviceFloat__shadow{
+  position: absolute;
+  inset: auto 0 -20px 0;
+  height: 24px;
+  filter: blur(14px);
+  opacity: .35;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,.45), rgba(0,0,0,0) 70%);
+  transform: translateZ(-2px);
+}
+
+.deviceFloat--soft .deviceFloat__inner{
+  filter: drop-shadow(0 16px 28px rgba(0,0,0,.16));
+}
+
+.deviceFloat--strong .deviceFloat__inner{
+  filter: drop-shadow(0 26px 46px rgba(0,0,0,.25));
+}
+
+@keyframes df-float{
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+/* Parallax sutil no scroll (opcional, só com CSS) */
+.deviceFloat{
+  --scrollY: 0;
+}
+@supports (animation-timeline: scroll()){
+  @keyframes df-parallax{ to { transform: translateY(-14px);} }
+  .deviceFloat{
+    animation: df-float 6.5s ease-in-out infinite,
+               df-parallax linear both;
+    animation-timeline: scroll(root);
+    animation-range: entry 0% cover 60%;
+  }
+}
+
+/* Acessibilidade: reduz movimento */
+@media (prefers-reduced-motion: reduce){
+  .deviceFloat{
+    animation: none;
+  }
+  .deviceFloat__inner{
+    transform: none !important;
+    transition: none;
+  }
+}
