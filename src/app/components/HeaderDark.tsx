@@ -25,8 +25,7 @@ export default function HeaderDark({ whatsappUrl }: Props) {
       <div className="container headerDark__in">
         {/* Marca */}
         <a href="#topo" className="brand" aria-label="Elite Blindagem">
-          <Image src="/blindagem.png" alt="" width={28} height={28} />
-          <span>Elite Blindagem</span>
+          <Image src="/blindagem.png" alt="" width={48} height={48} />
         </a>
 
         {/* Nav desktop */}

@@ -17,9 +17,13 @@ export default function Hero({
 }: HeroProps) {
   const heroRef = useRef<HTMLElement>(null);
 
+  // Anti-FOUC: começa invisível inline e só mostra quando hidratar
   useEffect(() => {
     const el = heroRef.current;
     if (!el) return;
+    // remove o "data-state=init" (que mantém opacity:0 inline) e dispara a timeline
+    el.removeAttribute("data-state");
+    // leve rAF para garantir recálculo antes da animação
     requestAnimationFrame(() => el.classList.add("play"));
   }, []);
 
@@ -27,7 +31,13 @@ export default function Hero({
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
 
   return (
-    <section ref={heroRef} className="hero">
+    // data-state="init" + style inline -> evita flash sem CSS
+    <section
+      ref={heroRef}
+      className="hero"
+      data-state="init"
+      style={{ opacity: 0 }}
+    >
       {/* === FAÍSCAS DE FUNDO === */}
       <div className="sparks" aria-hidden>
         {Array.from({ length: 22 }).map((_, i) => (
@@ -36,6 +46,7 @@ export default function Hero({
       </div>
 
       <div className="container">
+        {/* VISUAL */}
         <div className="mediaCol">
           <div className="deviceWrapper">
             <div className="watch">
@@ -59,8 +70,9 @@ export default function Hero({
           </div>
         </div>
 
+        {/* TEXTO */}
         <div className="textCol">
-          <h1 className="title">Elite Blindagem</h1>
+          <h1 className="title">ELITE BLINDAGEM</h1>
           <h2 className="subtitle">O futuro da proteção já chegou</h2>
           <p className="lead">
             Tecnologia de <strong>nanoproteção com titânio</strong> — cria uma
@@ -79,25 +91,29 @@ export default function Hero({
       </div>
 
       <style jsx>{`
+        /* ===== LAYOUT & ANTI-FOUC ===== */
         .hero {
           position: relative;
           background: #000;
           color: #eef2f7;
-          padding: clamp(40px, 6vw, 80px) 0;
+          /* menos espaço no desktop; mantive confortável no mobile */
+          padding-block: clamp(24px, 5vw, 48px);
           overflow: hidden;
-          opacity: 0;
-          transform: scale(1.02);
+
+          /* quando o atributo data-state é removido, a transição entra */
           transition: opacity 0.5s ease, transform 0.6s ease;
+          transform: scale(1.02);
         }
         .hero.play {
-          opacity: 1;
+          opacity: 1 !important; /* garantido mesmo sem inline */
           transform: scale(1);
         }
+
         .container {
           width: min(1140px, 92%);
           margin: auto;
           display: grid;
-          gap: 40px;
+          gap: clamp(20px, 4vw, 32px); /* gap menor no desktop */
           align-items: center;
           position: relative;
           z-index: 2;
@@ -106,69 +122,67 @@ export default function Hero({
           .container {
             grid-template-columns: 1fr 1fr;
           }
+          /* mais perto do cabeçalho no desktop */
+          .hero {
+            padding-block: clamp(16px, 3.2vw, 36px);
+          }
         }
 
-        /* === PARTICLES / FAÍSCAS === */
+        /* ===== PARTICLES / FAÍSCAS ===== */
         .sparks {
           position: absolute;
           inset: 0;
           overflow: hidden;
           z-index: 0;
+          pointer-events: none;
         }
         .spark {
           position: absolute;
-          bottom: 0;
-          left: 50%;
+          bottom: -10%;
+          left: calc(2% + 96% * var(--r, 0.5));
           width: 2px;
-          height: 20px;
-          background: linear-gradient(180deg, #fff, transparent);
+          height: 18px;
           border-radius: 2px;
+          background: linear-gradient(180deg, #fff, transparent);
           opacity: 0;
-          transform: translateX(-50%) scaleY(0.5);
+          transform: translateY(0) scaleY(0.5);
           animation: rise 4s linear infinite;
+          animation-delay: calc(-1s * var(--d, 0));
         }
         .spark:nth-child(odd) {
           background: linear-gradient(180deg, #a6bfff, transparent);
         }
         .spark:nth-child(3n) {
-          background: linear-gradient(180deg, #ffffff, transparent);
           width: 3px;
-        }
-        .spark {
-          --x: calc((var(--i, 0) - 10) * 4%);
-        }
-        .spark:nth-child(n) {
-          left: calc(50% - 200px + (var(--n) * 16px));
-        }
-        .sparks span {
-          --i: calc(var(--n) * 1);
-        }
-        .sparks .spark {
-          left: calc(2% + 96% * var(--random, 0.5));
         }
         @keyframes rise {
           0% {
-            transform: translateY(100%) scaleY(0.5);
             opacity: 0;
+            transform: translateY(100%) scaleY(0.5);
           }
-          10% {
+          12% {
             opacity: 1;
           }
           50% {
-            transform: translateY(-80%) scaleY(1);
-            opacity: 0.8;
+            transform: translateY(-20%) scaleY(1);
+            opacity: 0.9;
           }
           100% {
-            transform: translateY(-120%) scaleY(0.6);
+            transform: translateY(-140%) scaleY(0.6);
             opacity: 0;
           }
         }
 
-        /* === DEVICE MOTION === */
+        /* ===== VISUAL (reduzi altura no desktop) ===== */
+        .mediaCol {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
         .deviceWrapper {
           position: relative;
-          width: clamp(280px, 34vw, 520px);
-          aspect-ratio: 1/1.8;
+          width: clamp(260px, 33vw, 480px); /* ligeiramente menor no desktop */
+          height: clamp(360px, 46vh, 560px); /* ↓ de 52vh para 46vh */
           margin: auto;
         }
         .watch,
@@ -205,7 +219,7 @@ export default function Hero({
           }
           60% {
             opacity: 1;
-            transform: translateY(12%) rotate(-6deg) scale(1.05);
+            transform: translateY(8%) rotate(-6deg) scale(1.05);
           }
           100% {
             opacity: 1;
@@ -213,15 +227,41 @@ export default function Hero({
           }
         }
 
-        /* === TEXT ANIMATION === */
+        /* ===== TEXTO (menos “preto vazio” e efeito sutil) ===== */
         .textCol {
+          position: relative;
           opacity: 0;
           animation: textIn 0.8s ease 3.6s forwards;
         }
+        /* feixe metálico sutil atrás do texto (sem poluir) */
+        .textCol::before {
+          content: "";
+          position: absolute;
+          left: -6%;
+          top: -8%;
+          width: 36%;
+          height: 120%;
+          pointer-events: none;
+          background: radial-gradient(
+              60% 100% at 0% 50%,
+              rgba(120, 140, 255, 0.15),
+              transparent 60%
+            ),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.06), transparent 60%);
+          filter: blur(8px);
+          opacity: 0.7;
+          transform: translateZ(0);
+        }
+        @media (max-width: 900px) {
+          .textCol::before {
+            display: none; /* no mobile está ótimo sem esse preenchimento */
+          }
+        }
+
         @keyframes textIn {
           from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(24px);
           }
           to {
             opacity: 1;
@@ -229,33 +269,38 @@ export default function Hero({
           }
         }
         .title {
-          font-size: clamp(30px, 3vw, 48px);
-          font-weight: 800;
+          font-size: clamp(26px, 3.1vw, 44px);
+          font-weight: 900;
           margin: 0 0 8px;
+          letter-spacing: 0.02em;
           text-transform: uppercase;
-          background: linear-gradient(90deg, #e8ecff 0%, #6f7dff 25%, #ffffff 50%, #6f7dff 75%, #e8ecff 100%);
+          background: linear-gradient(
+            90deg,
+            #e8ecff 0%,
+            #6f7dff 25%,
+            #ffffff 50%,
+            #6f7dff 75%,
+            #e8ecff 100%
+          );
           background-size: 300% 100%;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
-          animation: forgeText 2.4s ease-in-out 1.2s forwards,
-            shineMove 4s linear 3.4s infinite;
           opacity: 0;
-        }
-        .hero.play .title {
-          opacity: 1;
+          animation: forgeText 1s cubic-bezier(0.2, 1, 0.3, 1) 1.1s forwards,
+            shineMove 4s linear 3.2s infinite;
         }
         @keyframes forgeText {
           0% {
             opacity: 0;
-            letter-spacing: 0.2em;
-            transform: scale(1.2) rotateX(40deg);
+            letter-spacing: 0.16em;
             filter: blur(6px);
+            transform: scale(1.06);
           }
-          70% {
+          60% {
             opacity: 1;
-            letter-spacing: 0.05em;
-            transform: scale(1) rotateX(0deg);
+            letter-spacing: 0.02em;
             filter: blur(0);
+            transform: scale(1);
           }
           100% {
             opacity: 1;
@@ -269,15 +314,14 @@ export default function Hero({
             background-position: 300% 0%;
           }
         }
-
         .subtitle {
           font-size: clamp(18px, 1.8vw, 22px);
-          font-weight: 600;
-          margin: 6px 0 16px;
+          font-weight: 700;
           color: #b7c2ff;
+          margin: 4px 0 14px;
           opacity: 0;
-          transform: translateY(20px);
-          animation: subAppear 0.8s cubic-bezier(0.25, 1, 0.3, 1) 2.6s forwards;
+          transform: translateY(16px);
+          animation: subAppear 0.7s cubic-bezier(0.2, 1, 0.3, 1) 3s forwards;
         }
         @keyframes subAppear {
           to {
@@ -287,27 +331,27 @@ export default function Hero({
         }
         .lead {
           color: #d6dce6;
-          font-size: clamp(15px, 1.3vw, 16.4px);
+          font-size: clamp(15px, 1.28vw, 16.2px);
           line-height: 1.6;
           max-width: 52ch;
-          margin-bottom: 22px;
+          margin-bottom: 18px;
         }
 
-        /* === CTA BUTTONS === */
+        /* ===== CTA ===== */
         .ctaRow {
           display: flex;
           gap: 12px;
           opacity: 0;
-          animation: btnRise 0.9s cubic-bezier(0.25, 1, 0.3, 1) 4.2s forwards;
+          animation: btnRise 0.8s cubic-bezier(0.25, 1, 0.3, 1) 4s forwards;
         }
         @keyframes btnRise {
           0% {
-            transform: translateY(40px) scale(0.95);
+            transform: translateY(36px) scale(0.96);
             opacity: 0;
           }
           70% {
             opacity: 1;
-            transform: translateY(-6px) scale(1.02);
+            transform: translateY(-4px) scale(1.02);
           }
           100% {
             transform: translateY(0) scale(1);
