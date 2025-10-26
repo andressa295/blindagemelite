@@ -1,7 +1,7 @@
 // src/app/components/Hero.tsx
 "use client";
 import Image from "next/image";
-import { useCallback, type ReactNode, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, type ReactNode, type CSSProperties } from "react";
 
 type Props = {
   whatsappUrl: string;
@@ -10,11 +10,10 @@ type Props = {
   childrenEffect?: ReactNode;
 };
 
-/** CSS vars tipadas */
 type HeroCSSVars = CSSProperties & {
-  "--auroraOpacity"?: number | string;  // força do efeito (0.0–1)
-  "--auroraSpeed"?: number | string;    // segundos por ciclo
-  "--auroraAngle"?: number | string;    // graus de inclinação
+  "--ionOpacity"?: number | string;  // 0–1
+  "--ionSpeed"?: number | string;    // s
+  "--ionAngle"?: number | string;    // deg
 };
 
 export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Props) {
@@ -22,11 +21,19 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   }, [whatsappUrl]);
 
-  /** Ajuste fino do efeito (visível porém sutil) */
+  // Garantir que o título NÃO fica invisível
+  const titleRef = useRef<HTMLHeadingElement | null>(null);
+  useEffect(() => {
+    const el = titleRef.current;
+    if (!el) return;
+    // Mostra já (sem depender de observer)
+    el.classList.add("revealActive");
+  }, []);
+
   const styleVars: HeroCSSVars = {
-    "--auroraOpacity": 0.12, // 0.10–0.18
-    "--auroraSpeed": 48,     // maior = mais lento
-    "--auroraAngle": 24,     // diagonal suave
+    "--ionOpacity": 0.26, // mais presente no preto; ajuste fino: 0.22–0.32
+    "--ionSpeed": 42,
+    "--ionAngle": 26,
   };
 
   return (
@@ -37,17 +44,16 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
       aria-describedby="hero-lead"
       style={styleVars}
     >
-      {/* Se usar, fica por baixo de tudo (recomendado não misturar com o aurora) */}
+      {/* efeito externo opcional (fica por baixo) */}
       {childrenEffect}
 
-      {/* ÚNICO EFEITO: AURORA RIBBONS */}
-      <div className="bg fx-aurora" aria-hidden>
-        {/* camada de textura suave */}
+      {/* ===== EFEITO ÚNICO: ION GLOW (visível em preto puro) ===== */}
+      <div className="bg fx-ion" aria-hidden>
         <i aria-hidden />
       </div>
 
       <div className="container grid">
-        {/* IMAGEM — primeiro no mobile */}
+        {/* IMAGEM */}
         <div className="mediaCol">
           <figure className="frame" aria-label="Dispositivo blindado">
             <div className="glass">
@@ -72,7 +78,10 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
         {/* TEXTO */}
         <div className="textCol">
           <p className="eyebrow">Proteção invisível · Resistência incomparável</p>
-          <h1 className="h1" id="hero-title">Elite Blindagem: o futuro da proteção já chegou</h1>
+
+          <h1 className="h1 revealInit" id="hero-title" ref={titleRef}>
+            Elite Blindagem: o futuro da proteção já chegou
+          </h1>
 
           <p className="lead" id="hero-lead">
             A Elite Blindagem traz ao Brasil uma tecnologia de <strong>nanoproteção com titânio</strong> que cria
@@ -102,82 +111,68 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
         .hero{
           position:relative; isolation:isolate;
           padding: clamp(18px,4vw,26px) 0 clamp(16px,3vw,22px);
-          background:#0b0f14; color:#eef2f7; overflow:clip;
+          background:#000; /* preto absoluto */
+          color:#eef2f7; overflow:clip;
         }
         :global(.vantaBlock){ position:absolute; inset:0; z-index:0; pointer-events:none; }
         .bg{ position:absolute; inset:0; z-index:1; pointer-events:none; }
         .hero > .container{ position:relative; z-index:2; }
 
-        /* ========= AURORA RIBBONS =========
-           Duas faixas diagonais com conic/radial + blur, drift lento.
-           Uma camada extra (<i>) aplica granulação finíssima p/ dar “caro”.
+        /* ========= ION GLOW =========
+           - 100% visível em preto (#000), sem blend-modes.
+           - Duas faixas diagonais + textura leve.
         */
-        .fx-aurora{
-          --o: var(--auroraOpacity);
-          --spd: var(--auroraSpeed);
-          --ang: var(--auroraAngle);
+        .fx-ion{
+          --o: var(--ionOpacity);
+          --spd: var(--ionSpeed);
+          --ang: var(--ionAngle);
           position:absolute; inset:0; overflow:hidden;
-          background:#0b0f14;
-        }
-        .fx-aurora::before,
-        .fx-aurora::after{
-          content:""; position:absolute; inset:-18%;
-          transform: rotate(calc(var(--ang) * 1deg));
-          filter: blur(26px);
-          mix-blend-mode: screen; /* luz sobre fundo escuro */
-          opacity: calc(var(--o) + 0.02);
-          animation: auroraDrift var(--spd)s ease-in-out infinite alternate;
           background:
-            /* faixa 1 (fria) */
-            radial-gradient(80% 40% at 20% 30%, rgba(120,160,255,.24) 0%, transparent 60%),
-            conic-gradient(from 0deg at 50% 50%,
-              rgba(110,150,255,.24) 0 25%,
-              rgba(160,210,255,.10) 25% 45%,
-              transparent 45% 100%);
+            radial-gradient(120% 80% at 50% -10%, rgba(55,85,150, calc(var(--o)*.35)), rgba(0,0,0,0) 70%),
+            #000;
         }
-        .fx-aurora::after{
+        .fx-ion::before,
+        .fx-ion::after{
+          content:""; position:absolute; inset:-22%;
+          filter: blur(28px);
+          opacity: calc(var(--o) + 0.06);
+          animation: ionDrift var(--spd)s ease-in-out infinite alternate;
+        }
+        /* faixa 1 (lado esquerdo -> centro) */
+        .fx-ion::before{
+          transform: rotate(calc(var(--ang) * 1deg));
+          background:
+            radial-gradient(60% 40% at 18% 32%, rgba(84,148,255,.34), rgba(0,0,0,0) 62%),
+            linear-gradient(90deg, rgba(24,120,255,.22), rgba(0,0,0,0) 60%);
+        }
+        /* faixa 2 (lado direito -> centro) */
+        .fx-ion::after{
           transform: rotate(calc(var(--ang) * -1deg));
-          opacity: calc(var(--o) + 0.01);
+          opacity: calc(var(--o) + 0.05);
           animation-duration: calc(var(--spd) * 1.35s);
           background:
-            /* faixa 2 (neutra/metal) */
-            radial-gradient(70% 35% at 80% 60%, rgba(200,220,255,.18) 0%, transparent 62%),
-            conic-gradient(from 180deg at 50% 50%,
-              rgba(180,195,220,.16) 0 18%,
-              rgba(255,255,255,.06) 18% 40%,
-              transparent 40% 100%);
+            radial-gradient(58% 38% at 82% 62%, rgba(180,198,255,.26), rgba(0,0,0,0) 64%),
+            linear-gradient(270deg, rgba(220,235,255,.14), rgba(0,0,0,0) 60%);
         }
-
-        /* Textura finíssima: simula “fibra/ruído” muito discreto */
-        .fx-aurora > i{
+        /* textura sutil */
+        .fx-ion > i{
           position:absolute; inset:-2%;
-          opacity: calc(var(--o) * 0.65);
-          mix-blend-mode: soft-light;
-          background:
-            repeating-linear-gradient(
-              90deg,
-              rgba(200,210,230,.045) 0 1px,
-              rgba(200,210,230,0) 1px 22px
-            );
-          filter: blur(3px);
-          animation: grainShift calc(var(--spd) * 1.8s) linear infinite;
+          opacity: calc(var(--o) * .40);
+          background: repeating-linear-gradient(90deg, rgba(190,205,255,.045) 0 1px, transparent 1px 20px);
+          filter: blur(2px);
+          animation: ionGrain calc(var(--spd) * 1.6s) linear infinite;
         }
 
-        @keyframes auroraDrift {
-          0%   { transform: translate3d(-2%, -1%, 0) rotate(var(--ang)); }
-          100% { transform: translate3d( 2%,  1%, 0) rotate(var(--ang)); }
+        @keyframes ionDrift {
+          0%   { transform: translate3d(-2%, -1%, 0); }
+          100% { transform: translate3d( 2%,  1%, 0); }
         }
-        @keyframes grainShift {
+        @keyframes ionGrain {
           from { background-position: 0 0; }
           to   { background-position: 120px 0; }
         }
 
-        /* Fallback quando não rolar blend avançado/mask — sobe opacidade */
-        @supports not (mix-blend-mode: screen) {
-          .fx-aurora::before, .fx-aurora::after { mix-blend-mode: normal; opacity: calc(var(--o) + .08); }
-        }
-
-        /* Grid conteúdo */
+        /* Grid */
         .grid{
           display:grid; gap: clamp(16px,3vw,26px);
           grid-template-columns: 1fr; align-items:start;
@@ -192,8 +187,13 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
         /* Tipografia */
         .eyebrow{
           color:#c6ced9; opacity:.9; margin:0 0 8px;
-          font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700;
+          font-size:12.8px; letter-spacing:.12em; text-transform:uppercase; font-weight:700;
+          white-space: nowrap;
         }
+        @media (max-width:420px){ .eyebrow{ font-size:12px; letter-spacing:.10em; } }
+        @media (max-width:360px){ .eyebrow{ font-size:11px; letter-spacing:.085em; } }
+        @media (max-width:330px){ .eyebrow{ font-size:10.2px; letter-spacing:.075em; } }
+
         .h1{
           margin:0 0 8px; color:#fff;
           font-size: clamp(22px, 3vw, 32px);
@@ -203,6 +203,17 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
         .lead, .subLead{ color:#d6dce6; margin:6px 0 0; max-width:62ch; }
         .lead{ font-size: clamp(14.6px,1.35vw,16.2px); line-height:1.58; }
         .subLead strong{ color:#fff; font-weight:720; }
+
+        /* Reveal sutil (título) — agora seguro */
+        .revealInit{ opacity:1; transform:none; } /* visível por padrão */
+        .revealActive{ animation: popIn .36s cubic-bezier(.22,.61,.36,1); }
+        @keyframes popIn {
+          from { opacity:.0; transform: translateY(8px) scale(.995); }
+          to   { opacity:1;  transform: translateY(0)  scale(1); }
+        }
+        @media (prefers-reduced-motion: reduce){
+          .revealActive{ animation:none; }
+        }
 
         /* CTAs */
         .ctaRow{ margin-top:14px; display:flex; gap:12px; flex-wrap:nowrap; }
@@ -221,36 +232,17 @@ export default function Hero({ whatsappUrl, onScrollToOque, childrenEffect }: Pr
         }
 
         /* Mídia */
-        .frame{
-          margin:0; border-radius:18px; overflow:hidden; border:0; background:#0b0f14;
-          box-shadow: 0 10px 26px rgba(0,0,0,.45);
-          transform: translateZ(0);
-        }
-        .glass{
-          position:relative; width:100%;
-          min-height: clamp(360px, 48vh, 560px);
-          display:flex; align-items:center; justify-content:center;
-          background:#0b0f14;
-        }
+        .frame{ margin:0; border-radius:18px; overflow:hidden; border:0; background:#000; box-shadow: 0 10px 26px rgba(0,0,0,.45); transform: translateZ(0); }
+        .glass{ position:relative; width:100%; min-height: clamp(360px, 48vh, 560px); display:flex; align-items:center; justify-content:center; background:#000; }
         .img{ object-fit:cover; object-position:50% 30%; filter: saturate(1.04) contrast(1.02); }
-        .vignette{
-          position:absolute; inset:0; pointer-events:none;
-          background:
+        .vignette{ position:absolute; inset:0; pointer-events:none; background:
             linear-gradient(180deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 32%),
-            radial-gradient(120% 120% at 100% 100%, rgba(0,0,0,.22), transparent 52%);
-          mix-blend-mode:multiply;
-        }
-        .badge{
-          position:absolute; left:12px; bottom:12px; z-index:1;
-          display:flex; align-items:center; gap:8px;
-          background:rgba(255,255,255,.94); border:1px solid #e6e8ec; border-radius:999px;
-          padding:6px 10px; color:#0c1117; font-size:12.3px; font-weight:780;
-          box-shadow:0 8px 18px rgba(0,0,0,.28);
-        }
+            radial-gradient(120% 120% at 100% 100%, rgba(0,0,0,.22), transparent 52%); mix-blend-mode:multiply; }
+        .badge{ position:absolute; left:12px; bottom:12px; z-index:1; display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.94); border:1px solid #e6e8ec; border-radius:999px; padding:6px 10px; color:#0c1117; font-size:12.3px; font-weight:780; box-shadow:0 8px 18px rgba(0,0,0,.28); }
 
-        /* Acessibilidade */
+        /* Motion safe */
         @media (prefers-reduced-motion: reduce){
-          .fx-aurora, .fx-aurora::before, .fx-aurora::after, .fx-aurora > i { animation: none !important; }
+          .fx-ion, .fx-ion::before, .fx-ion::after, .fx-ion > i { animation: none !important; }
         }
       `}</style>
     </section>

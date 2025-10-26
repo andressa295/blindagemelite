@@ -1,8 +1,9 @@
+// src/app/components/Domicilio.tsx
 "use client";
 
 type Props = {
   whatsappUrl: string;
-  /** Efeito opcional só neste bloco (ex.: <div className="vantaSoftAlt" />) */
+  /** Efeito opcional extra (se quiser somar algo por cima) */
   childrenEffect?: React.ReactNode;
 };
 
@@ -11,72 +12,76 @@ export default function Domicilio({ whatsappUrl, childrenEffect }: Props) {
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
 
   return (
+    // Wrapper de SEÇÃO (full-bleed) com efeito por trás
     <section
       id="domicilio"
-      className="container section sectionDivider effectHost contentVis"
+      className="section sectionDivider effectWrap contentVis"
       aria-labelledby="dom-title"
       aria-describedby="dom-lead"
     >
-      {/* Efeito sutil só neste bloco */}
-      <div className="vantaSoftAlt" aria-hidden="true" />
+      {/* Efeito FULL-BLEED (100vw) atrás de toda a seção */}
+      <div className="effectBg vantaSoftAlt" aria-hidden="true" />
       {childrenEffect}
 
-      <div className="gridTwo">
-        <div>
-          <h2 className="h2" id="dom-title" data-reveal>
-            Atendimento personalizado a domicílio
-          </h2>
+      {/* Conteúdo limitado ao container, acima do efeito */}
+      <div className="container">
+        <div className="gridTwo">
+          <div>
+            <h2 className="h2" id="dom-title" data-reveal>
+              Atendimento personalizado a domicílio
+            </h2>
 
-          <p className="copy" id="dom-lead" data-reveal>
-            Levamos tecnologia, praticidade e sofisticação até você — com
-            conforto, exclusividade e eficiência. Atendimento individualizado,
-            equipamentos profissionais e produtos de alta performance.
-          </p>
+            <p className="copy" id="dom-lead" data-reveal>
+              Levamos tecnologia, praticidade e sofisticação até você — com
+              conforto, exclusividade e eficiência. Atendimento individualizado,
+              equipamentos profissionais e produtos de alta performance.
+            </p>
 
-          <div className="card gradientBorder hoverLift" data-reveal>
-            <h3 className="h3">Requisitos para o atendimento</h3>
-            <ul className="bullets">
-              <li>Uma tomada próxima para os equipamentos;</li>
-              <li>Uma mesa ou superfície estável para a aplicação.</li>
-            </ul>
+            <div className="card gradientBorder hoverLift" data-reveal>
+              <h3 className="h3">Requisitos para o atendimento</h3>
+              <ul className="bullets">
+                <li>Uma tomada próxima para os equipamentos;</li>
+                <li>Uma mesa ou superfície estável para a aplicação.</li>
+              </ul>
 
-            <div className="ctaRow left">
-              <button
-                className="btnPrimary"
-                onClick={openWhats}
-                aria-label="Agendar atendimento a domicílio pelo WhatsApp"
-            >
-              Agendar agora
-            </button>
+              <div className="ctaRow left">
+                <button
+                  className="btnPrimary"
+                  onClick={openWhats}
+                  aria-label="Agendar atendimento a domicílio pelo WhatsApp"
+                >
+                  Agendar agora
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-        </div>
 
-        {/* Vídeo estável e grande */}
-        <figure
-          className="figure figureVideo gloss hoverLift gradientBorder"
-          data-reveal
-        >
-          <video
-            className="videoCover"
-            controls
-            playsInline
-            preload="metadata"
-            poster="/mockups/poster.jpg"
-            controlsList="nodownload noplaybackrate"
+          {/* Vídeo grande (segunda coluna no desktop, abaixo no mobile) */}
+          <figure
+            className="figure figureVideo gloss hoverLift gradientBorder"
+            data-reveal
           >
-            <source src="/videos/processo.webm" type="video/webm" />
-            <source src="/videos/processo.mp4" type="video/mp4" />
-            Seu navegador não suporta vídeo HTML5.
-          </video>
-          <figcaption className="srOnly">
-            Demonstração do processo de aplicação da blindagem
-          </figcaption>
-        </figure>
+            <video
+              className="videoCover"
+              controls
+              playsInline
+              preload="metadata"
+              poster="/mockups/poster.jpg"
+              controlsList="nodownload noplaybackrate"
+            >
+              <source src="/videos/processo.webm" type="video/webm" />
+              <source src="/videos/processo.mp4" type="video/mp4" />
+              Seu navegador não suporta vídeo HTML5.
+            </video>
+            <figcaption className="srOnly">
+              Demonstração do processo de aplicação da blindagem
+            </figcaption>
+          </figure>
+        </div>
       </div>
 
       <style jsx>{`
-        /* ===== Escopo local ===== */
+        /* ===== Estrutura ===== */
         .container { width: min(1140px, 92%); margin-inline: auto; }
         .section { padding: 18px 0 14px; }
         .srOnly {
@@ -84,7 +89,7 @@ export default function Domicilio({ whatsappUrl, childrenEffect }: Props) {
           overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
         }
 
-        /* Divider premium (coeso com o Hero) */
+        /* Divider premium (coeso com o restante) */
         .sectionDivider { position: relative; }
         .sectionDivider::after {
           content: ""; position: absolute; left: 50%; transform: translateX(-50%);
@@ -94,19 +99,33 @@ export default function Domicilio({ whatsappUrl, childrenEffect }: Props) {
         }
         @keyframes dividerSweep { 0%,100%{opacity:.5;} 50%{opacity:1;} }
 
-        /* Efeito de fundo sob controle */
-        .effectHost { position: relative; overflow: hidden; }
-        .effectHost > *:not(.vantaSoftAlt){ position: relative; z-index: 1; }
+        /* ===== FULL-BLEED EFFECT =====
+           A camada de efeito vive fora do .container e ocupa 100vw,
+           alinhada ao centro da viewport.
+        */
+        .effectWrap { position: relative; overflow: clip; }
+        .effectWrap > .container { position: relative; z-index: 1; }
+        .effectBg{
+          position: absolute; top: 0; bottom: 0;
+          left: 50%; width: 100vw; transform: translateX(-50%);
+          z-index: 0; pointer-events: none;
+        }
+
+        /* VantaSoftAlt (névoa sutil, blend) */
         .vantaSoftAlt {
-          position: absolute; inset: 0; z-index: 0; pointer-events: none;
           opacity: .18; mix-blend-mode: multiply;
+          /* fundo base cinza-claro para aparecer tanto em branco quanto cinza */
+          background:
+            radial-gradient(40% 30% at 20% 10%, rgba(123,92,255,.20), transparent 60%),
+            radial-gradient(35% 25% at 80% 20%, rgba(201,162,39,.16), transparent 60%),
+            radial-gradient(30% 30% at 60% 80%, rgba(76,194,255,.18), transparent 60%);
         }
         .vantaSoftAlt::before {
           content: ""; position: absolute; inset: -20%;
           background:
-            radial-gradient(40% 30% at 20% 10%, rgba(123,92,255,.45), transparent 60%),
-            radial-gradient(35% 25% at 80% 20%, rgba(201,162,39,.35), transparent 60%),
-            radial-gradient(30% 30% at 60% 80%, rgba(76,194,255,.35), transparent 60%);
+            radial-gradient(40% 30% at 20% 10%, rgba(123,92,255,.35), transparent 60%),
+            radial-gradient(35% 25% at 80% 20%, rgba(201,162,39,.28), transparent 60%),
+            radial-gradient(30% 30% at 60% 80%, rgba(76,194,255,.30), transparent 60%);
           filter: blur(18px);
           animation: vantaFloat 16s ease-in-out infinite alternate;
         }
@@ -115,28 +134,28 @@ export default function Domicilio({ whatsappUrl, childrenEffect }: Props) {
           to   { transform: translate(2%, 2%) scale(1.06); }
         }
 
-        /* Grid da seção */
+        /* ===== Grid ===== */
         .gridTwo { display: grid; gap: 16px; align-items: center; }
         @media (min-width: 900px) {
           .gridTwo { grid-template-columns: 1.05fr .95fr; gap: 20px; }
         }
 
-        /* Tipografia local */
+        /* ===== Tipografia ===== */
         .h2 { font-size: clamp(18px, 2.0vw, 22px); font-weight: 780; line-height: 1.2; margin: 0 0 6px; color: #0f1216; }
         .h3 { font-size: 15px; font-weight: 760; margin: 0 0 6px; color: #111; }
         .copy { color: #5a6270; margin: 4px 0; }
 
-        /* Card premium */
+        /* ===== Card ===== */
         .card {
           border: 1px solid #d9dde4; border-radius: 14px; padding: 12px;
           background: #fff; box-shadow: 0 6px 16px rgba(10,15,20,.05);
         }
 
-        /* Lista bullets */
+        /* ===== Lista ===== */
         .bullets { padding-left: 18px; margin: 8px 0 10px; color: #5a6270; }
         .bullets li { margin: 4px 0; }
 
-        /* CTA buttons */
+        /* ===== CTAs ===== */
         .ctaRow { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-start; margin: 12px 0 2px; }
         .btnPrimary, .btnGhost {
           border-radius: 999px; padding: 10px 16px; font-weight: 800; letter-spacing: .01em; cursor: pointer;
@@ -147,8 +166,11 @@ export default function Domicilio({ whatsappUrl, childrenEffect }: Props) {
         .btnGhost { background: #fff; color: #111; border: 1px solid #d9dde4; }
         .btnGhost:hover { border-color: #c9ced8; transform: translateY(-1px) scale(1.01); }
 
-        /* Vídeo estável (sem shift) */
-        .figure { position: relative; border: 1px solid #d9dde4; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 6px 16px rgba(10,15,20,.05); }
+        /* ===== Vídeo ===== */
+        .figure {
+          position: relative; border: 1px solid #d9dde4; border-radius: 14px; overflow: hidden;
+          background: #fff; box-shadow: 0 6px 16px rgba(10,15,20,.05);
+        }
         .figureVideo { aspect-ratio: 16/9; width: 100%; min-height: 0; }
         .videoCover { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
 

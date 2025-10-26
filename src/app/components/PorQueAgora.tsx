@@ -37,7 +37,7 @@ export default function PorQueAgora({ whatsappUrl }: Props) {
         <ul className="impactFacts reveal in" data-i="3" aria-label="Benefícios imediatos">
           <li><FiShield /><span>Proteção imediata</span></li>
           <li><FiTrendingDown /><span>Evita prejuízo alto</span></li>
-          <li><FiClock /><span>Atendimento rápido</span></li>
+          <li><FiClock /><span>Agilidade</span></li>
           <li><FiHome /><span>A domicílio</span></li>
         </ul>
 

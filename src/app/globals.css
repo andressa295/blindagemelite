@@ -36,13 +36,13 @@ a:hover { text-decoration: underline; }
 .page{ background:var(--page-bg); position:relative; overflow-x:clip; }
 
 /* ===== Header Dark ===== */
-.headerDark{ position:sticky; top:0; z-index:100; background:#0c0f13; border-bottom:1px solid rgba(255,255,255,.08); padding-top:env(safe-area-inset-top,0); }
+.headerDark{ position:sticky; top:0; z-index:100; background:#000000; border-bottom:1px solid rgba(255,255,255,.08); padding-top:env(safe-area-inset-top,0); }
 .headerDark__in{ height:60px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .brand{ display:flex; align-items:center; gap:10px; color:#eef1f6; font-weight:800; letter-spacing:.02em; text-decoration:none; }
 .brand:hover{ color:#fff; }
 .nav{ display:none; align-items:center; gap:14px; }
 .nav a{ color:#dfe4ea; font-size:14px; text-decoration:none; padding:8px 6px; border-radius:8px; }
-.nav a:hover{ color:#fff; background:rgba(255,255,255,.06); }
+.nav a:hover{ color:#fff; background:rgba(0, 0, 0, 0.06); }
 .btnSm{ padding:8px 14px; }
 .menuBtn{ display:inline-grid; place-items:center; width:40px; height:40px; border-radius:10px; border:1px solid rgba(255,255,255,.10); background:transparent; color:#eef1f6; }
 .menuBtn:active{ transform:scale(.98); }
