@@ -175,7 +175,7 @@ export default function Hero({
         .hero.play .phone {
           animation:
             phoneEnter 1.5s cubic-bezier(.25,1,.3,1) 1.8s forwards,
-            phoneHold 1.6s linear 3.3s forwards,
+            phoneHold 0.9s linear 3.1s forwards,
             phoneExit 0.6s ease-in-out 4.9s forwards;
         }
         @keyframes phoneEnter {
