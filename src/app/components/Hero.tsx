@@ -12,7 +12,7 @@ type HeroProps = {
 export default function Hero({
   whatsappUrl,
   onScrollToOque,
-  devicePhoneSrc = "/mobile.png",
+  devicePhoneSrc = "/mobile1.png",
   deviceWatchSrc = "/relogio.png",
 }: HeroProps) {
   const heroRef = useRef<HTMLElement>(null);
