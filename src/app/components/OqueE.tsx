@@ -10,6 +10,7 @@ export default function OqueE() {
     () => [
       { src: "/elite1.jpg", alt: "Aplicação de blindagem em smartphone" },
       { src: "/elite2.jpg", alt: "Detalhe do acabamento premium após aplicação" },
+      { src: "/elite.jpg", alt: "Aplicação de blindagem em smartphone" },
       { src: "/elite3.jpg", alt: "Equipamentos profissionais utilizados no processo" },
       { src: "/elite4.jpg", alt: "Resultado final: brilho e toque originais" },
     ],
